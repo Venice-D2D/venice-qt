@@ -8,6 +8,10 @@ Desktop implemetation of venice en C++ and QT
 
 ## Build via the CLI
 - Create a directory `build` on the project directory
+```
+mkdir build
+cd build
+```
 - Execute the following commands:
 
 ```
