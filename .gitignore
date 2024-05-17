@@ -1,0 +1,10 @@
+# C++ extensions
+*.o
+
+# Make file
+Makefile
+
+# Qmake
+.qmake.stash
+.qtc_clangd/
+*.pro.user
