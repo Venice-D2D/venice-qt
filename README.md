@@ -2,10 +2,21 @@
 Desktop implemetation of venice en C++ and QT
 
 ## Pre-requisites
-- QMake version 3.1
-- Qt version 5.12.8
-- Make version 4.2.1
+- QMake version 3.1 or higher
+- Qt version 5.12.8 or higuer
+- Make version 4.2.1 or higuer
 
+### Pre-requisites Installation in Ubuntu 22.04
+- For installing QT et QMake with related Bluetooth dependencies :
+
+```
+sudo apt install qtbase5-dev qt5-qmake qtconnectivity5 cmake
+```
+- If you have the issue `Project ERROR: Cannot run compiler 'g++'` you can also install `build-essential`
+
+```
+sudo apt install build-essential
+```
 ## Build via the CLI
 - Create a directory `build` on the project directory
 ```
