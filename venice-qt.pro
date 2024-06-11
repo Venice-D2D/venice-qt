@@ -19,18 +19,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 # Input
 HEADERS += \
+    datachannel.h \
+    filetransferservice.h \
     mainwindow.h \
     venicebluetoothuuid.h \
     venicemessage.h \
-    veniceservice.h
+    veniceservice.h \
+    wifidatachannel.h
 FORMS += \
     mainwindow.ui
 SOURCES += main.cpp \
+    datachannel.cpp \
+    filetransferservice.cpp \
     mainwindow.cpp \
     venicebluetoothuuid.cpp \
     venicemessage.cpp \
-    veniceservice.cpp
+    veniceservice.cpp \
+    wifidatachannel.cpp
 TRANSLATIONS += venice-qt_en_US.ts
-QT += widgets bluetooth
+QT += widgets bluetooth core
 CONFIG += c++23
+QT += network
 # DEFINES += QT_NO_DEBUG_OUTPUT

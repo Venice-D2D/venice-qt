@@ -59,7 +59,7 @@ private slots:
     void doPopup();
 
     /**
-     * @brief on_brownseSendFileButton_clicked show a browser file windows for selecting a file to be sent
+     * @brief on_brownseSendFileButton_clicked shows a browser file windows for selecting a file to be sent
      */
     void on_browseSendFileButton_clicked();
 
@@ -67,6 +67,16 @@ private slots:
      * @brief on_receiveFileButton_clicked
      */
     void on_receiveFileButton_clicked();
+
+    /**
+     * @brief on_bleSendRadioButton_clicked enables/disables the wifi radio button
+     */
+    void on_bleSendRadioButton_clicked();
+
+    /**
+     * @brief on_wifiSendRadioButton_clicked enables/disables the send file button
+     */
+    void on_wifiSendRadioButton_clicked();
 
 
 private:

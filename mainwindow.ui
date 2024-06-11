@@ -209,7 +209,7 @@
      </widget>
      <widget class="QRadioButton" name="wifiSendRadioButton">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -241,7 +241,7 @@
      </widget>
      <widget class="QPushButton" name="browseSendFileButton">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>

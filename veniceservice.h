@@ -3,6 +3,7 @@
 
 #include "veniceservice.h"
 #include "venicemessage.h"
+#include "wifidatachannel.h"
 
 #include <QtCore/QThread>
 #include <string>
@@ -15,10 +16,15 @@ class VeniceService: public QThread
         Q_OBJECT
 public:
     /**
-     * @brief VeniceServiceThread constuctor
+     * @brief VeniceServiceThread constructor
      * @param parent of the thread. It is a MainWindow instance
      */
     VeniceService(QObject *parent = nullptr, string filePath = "");
+
+    /**
+      * @brief VeniceServiceThread destructor
+      */
+    ~VeniceService();
 
     /**
      * @brief run executes the thread
@@ -34,6 +40,9 @@ private:
     const int MAX_MESSAGE_SIZE = 1000;
     const string WIFI_DATA_CHANNEL = "wifi_data_channel";
 
+    //The class to configure to manage the data channel
+     WifiDataChannel* channel;
+
     /**
      * @brief runFileServiceProvider creates and run the venice service
      * @param thread executing the service
@@ -47,6 +56,11 @@ private:
      * @return A vector containing VeniceMessage with data with a size less or equals than max_size
      */
     vector<VeniceMessage> readFileData(const string& name, const int& max_size);
+
+    /**
+     * @brief configureDataChannel Configures the datachannel related to the service
+     */
+    void configureDataChannel();
 
 
 };

@@ -20,8 +20,14 @@ using namespace std;
 VeniceService::VeniceService(QObject *parent, string filePath): QThread(parent)
 {
     this->filePath = filePath;
+    this->channel = new WifiDataChannel("192.168.1.1", "0.0.0.0", "255.255.255.0");
 }
 
+VeniceService::~VeniceService()
+{
+    this->channel->restoreChannelConfiguration();
+    delete(this->channel);
+}
 
 void VeniceService::run()
 {
@@ -35,6 +41,12 @@ void VeniceService::runFileServiceProvider()
     //The file is only advertised if it exists
     if(filesystem::exists(this->filePath))
     {
+        qDebug() << "Configuring data channel...";
+
+        this->configureDataChannel();
+
+        qDebug() << "Configuring BLE advertisement...";
+
         //File Characteristic creation
         qDebug() << "Creating File Characteristic";
 
@@ -61,7 +73,7 @@ void VeniceService::runFileServiceProvider()
         channelChacteristic.setUuid(VeniceBluetoothUuid::getWifiChannelCharacteristicType());
         channelChacteristic.setProperties(QLowEnergyCharacteristic::Read);
         //TODO Update accoring the code for enabling exchange via wifi
-        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";0;0;0"; // chanel identifier, address, ssid (Ap identifier), key
+        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";192.168.1.2;"+this->channel->getAdhocNetworkName()+";0"; // chanel identifier, address, ssid (Ap identifier), key
         channelChacteristic.setValue(QByteArray(channelCharacteristicValue.c_str()));
         const QLowEnergyDescriptorData clientConfigChannelCharacteristic(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
                                                     QByteArray(channelCharacteristicValue.c_str()));
@@ -163,5 +175,10 @@ vector<VeniceMessage> VeniceService::readFileData(const string& name, const int&
 
     inputFile.close();
     return messages;
+}
+
+void VeniceService::configureDataChannel()
+{
+    this->channel->configureChannel();
 }
 

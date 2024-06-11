@@ -73,3 +73,24 @@ void MainWindow::on_browseSendFileButton_clicked()
 void MainWindow::on_receiveFileButton_clicked()
 {
 }
+
+void MainWindow::on_bleSendRadioButton_clicked()
+{
+    if(ui->bleSendRadioButton->isChecked())
+        ui->wifiSendRadioButton->setEnabled(true);
+   else
+   {
+        ui->wifiSendRadioButton->setEnabled(false);
+        ui->wifiSendRadioButton->setChecked(false);
+        ui->browseSendFileButton->setEnabled(false);
+   }
+
+}
+
+void MainWindow::on_wifiSendRadioButton_clicked()
+{
+    if(ui->wifiSendRadioButton->isChecked())
+        ui->browseSendFileButton->setEnabled(true);
+    else
+        ui->browseSendFileButton->setEnabled(false);
+}
