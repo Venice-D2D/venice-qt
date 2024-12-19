@@ -1,0 +1,11 @@
+#ifndef ERRORSTARTINGFILETRANSFERSERVICEVENICEEXCEPTION_H
+#define ERRORSTARTINGFILETRANSFERSERVICEVENICEEXCEPTION_H
+
+
+class ErrorStartingFileTransferServiceVeniceException
+{
+public:
+    ErrorStartingFileTransferServiceVeniceException();
+};
+
+#endif // ERRORSTARTINGFILETRANSFERSERVICEVENICEEXCEPTION_H
