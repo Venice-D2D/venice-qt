@@ -4,6 +4,7 @@
 #include "veniceservice.h"
 #include "venicemessage.h"
 #include "wifidatachannel.h"
+#include "notbluetoothadapterfoundveniceexception.h"
 
 #include <QtCore/QThread>
 #include <string>
@@ -61,6 +62,12 @@ private:
      * @brief configureDataChannel Configures the datachannel related to the service
      */
     void configureDataChannel();
+
+    /**
+     * @brief selectBluetoothAdapter Selects and power on and avaiable bluetooh  devis
+     * @exception NotBluetoothAdapterFoundVeniceException if a valid bluetooth adapter is found
+     */
+    void selectBluetoothAdapter() throw();
 
 
 };

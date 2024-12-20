@@ -1,4 +1,5 @@
 #include "datachannel.h"
+#include "notsuitablewifiadapterfoundveniceexception.h"
 
 DataChannel::DataChannel(QNetworkInterface::InterfaceType networkInterfaceType)
 {
@@ -63,6 +64,32 @@ QString DataChannel::getNetworkInterfaceNameByType(QNetworkInterface::InterfaceT
 
     return interfaceName;
 }
+
+QNetworkInterface DataChannel::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType) throw()
+{
+    QNetworkInterface networkInterface;
+
+    QList<QNetworkInterface> currentInterfaces = QNetworkInterface::allInterfaces();
+
+
+    for(QNetworkInterface currentInterface: currentInterfaces)
+    {
+        if(currentInterface.type()== networkInterfaceType)
+        {
+            networkInterface = currentInterface;
+
+            qDebug() << "Selected Network interface Name " << networkInterface.name();
+            qDebug() << "Adresses " << networkInterface.allAddresses().size();
+            qDebug() << "Adresses Entries " << networkInterface.addressEntries().size();
+
+            return networkInterface;
+        }
+    }
+
+    throw NotSuitableWifiAdapterFoundVeniceException();
+}
+
+
 
 const char* DataChannel::networkInterfaceTypeToString(QNetworkInterface::InterfaceType networkInterfaceType)
 {

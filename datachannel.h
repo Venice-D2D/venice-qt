@@ -82,6 +82,14 @@ public:
      */
     static QString getNetworkInterfaceNameByType(QNetworkInterface::InterfaceType networkInterfaceType);
 
+    /**
+     * @brief searchNetworkInterfaceByType Searches a network interface by the given type
+     * @param networkInterfaceType QNetworkInterface::InterfaceType::Ethernet or QNetworkInterface::InterfaceType::Wifi
+     * @return The first network found of the given type or null if an interface is not found
+     * @throw NotSuitableWifiAdapterFoundVeniceException if an adapter of the given type is not found
+     */
+    static QNetworkInterface searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType) throw();
+
 protected:
     // The network interface type
     QNetworkInterface::InterfaceType networkInterfaceType;

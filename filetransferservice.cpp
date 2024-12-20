@@ -1,13 +1,18 @@
 #include "filetransferservice.h"
+#include "errorstartingfiletransferserviceveniceexception.h"
 
 
-FileTransferService::FileTransferService(QObject *parent, string filePath, QHostAddress ipAddress, quint16 port): QTcpServer(parent)
+FileTransferService::FileTransferService(QObject *parent, const char* filePath, QHostAddress ipAddress, quint16 port) throw(): QTcpServer(parent)
 {
     this->filePath = filePath;
 
-    this-> listen(ipAddress, port);
+    if(!this->listen(ipAddress, port))
+    {
+        qDebug() << "Issues starting FileTransferService";
+        throw ErrorStartingFileTransferServiceVeniceException();
 
-    qDebug() << this->serverAddress() << this->serverPort() << this->serverError();
+    }
+    qDebug() << "Listening on "<< this->serverAddress() << this->serverPort() << this->serverError();
 }
 
 FileTransferService::~FileTransferService()

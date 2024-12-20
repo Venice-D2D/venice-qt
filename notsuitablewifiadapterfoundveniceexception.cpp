@@ -1,6 +1,6 @@
 #include "notsuitablewifiadapterfoundveniceexception.h"
 
-NotSuitableWifiAdapterFoundVeniceException::NotSuitableWifiAdapterFoundVeniceException()
+NotSuitableWifiAdapterFoundVeniceException::NotSuitableWifiAdapterFoundVeniceException():VeniceException("Not Suitable Wifi Adapter Found")
 {
 
 }

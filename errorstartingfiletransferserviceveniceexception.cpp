@@ -1,6 +1,6 @@
 #include "errorstartingfiletransferserviceveniceexception.h"
 
-ErrorStartingFileTransferServiceVeniceException::ErrorStartingFileTransferServiceVeniceException()
+ErrorStartingFileTransferServiceVeniceException::ErrorStartingFileTransferServiceVeniceException(): VeniceException("Not Available Port Found")
 {
 
 }

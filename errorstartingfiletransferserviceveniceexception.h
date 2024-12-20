@@ -1,8 +1,10 @@
 #ifndef ERRORSTARTINGFILETRANSFERSERVICEVENICEEXCEPTION_H
 #define ERRORSTARTINGFILETRANSFERSERVICEVENICEEXCEPTION_H
 
+#include "veniceexception.h"
 
-class ErrorStartingFileTransferServiceVeniceException
+
+class ErrorStartingFileTransferServiceVeniceException: public VeniceException
 {
 public:
     ErrorStartingFileTransferServiceVeniceException();

@@ -1,6 +1,5 @@
 #include "notbluetoothadapterfoundveniceexception.h"
 
-NotBluetoothAdapterFoundVeniceException::NotBluetoothAdapterFoundVeniceException()
+NotBluetoothAdapterFoundVeniceException::NotBluetoothAdapterFoundVeniceException():VeniceException("Not Available Bluetooth Adapter Found")
 {
-
 }
