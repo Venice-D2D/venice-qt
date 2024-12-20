@@ -1,8 +1,9 @@
 #ifndef NOTSUITABLEWIFIADAPTERFOUNDVENICEEXCEPTION_H
 #define NOTSUITABLEWIFIADAPTERFOUNDVENICEEXCEPTION_H
 
+#include "veniceexception.h"
 
-class NotSuitableWifiAdapterFoundVeniceException
+class NotSuitableWifiAdapterFoundVeniceException: public VeniceException
 {
 public:
     NotSuitableWifiAdapterFoundVeniceException();

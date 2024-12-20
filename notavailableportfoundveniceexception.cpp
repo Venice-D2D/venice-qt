@@ -1,6 +1,5 @@
 #include "notavailableportfoundveniceexception.h"
 
-NotAvailablePortFoundVeniceException::NotAvailablePortFoundVeniceException()
+NotAvailablePortFoundVeniceException::NotAvailablePortFoundVeniceException():VeniceException("Not Available Port Found")
 {
-
 }

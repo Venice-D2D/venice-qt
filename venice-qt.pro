@@ -20,9 +20,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 HEADERS += \
     datachannel.h \
+    errorstartingfiletransferserviceveniceexception.h \
     filetransferservice.h \
     mainwindow.h \
+    notavailableportfoundveniceexception.h \
+    notbluetoothadapterfoundveniceexception.h \
+    notsuitablewifiadapterfoundveniceexception.h \
     venicebluetoothuuid.h \
+    veniceexception.h \
     venicemessage.h \
     veniceservice.h \
     wifidatachannel.h
@@ -30,9 +35,14 @@ FORMS += \
     mainwindow.ui
 SOURCES += main.cpp \
     datachannel.cpp \
+    errorstartingfiletransferserviceveniceexception.cpp \
     filetransferservice.cpp \
     mainwindow.cpp \
+    notavailableportfoundveniceexception.cpp \
+    notbluetoothadapterfoundveniceexception.cpp \
+    notsuitablewifiadapterfoundveniceexception.cpp \
     venicebluetoothuuid.cpp \
+    veniceexception.cpp \
     venicemessage.cpp \
     veniceservice.cpp \
     wifidatachannel.cpp

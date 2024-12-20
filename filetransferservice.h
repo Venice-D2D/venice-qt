@@ -25,7 +25,7 @@ public:
      * @param ipAddress The IP address for sharing the file
      * @param port The port used for listening
      */
-    FileTransferService(QObject *parent, string filePath, QHostAddress ipAddress, quint16 port);
+    FileTransferService(QObject *parent, const char* filePath, QHostAddress ipAddress, quint16 port) throw();
 
     /**
       * @brief ~FileTransferService destructor of the service that closes the TCP server
@@ -38,7 +38,7 @@ private:
     int port;
 
     // The file path
-    string filePath;
+    const char* filePath;
 
     // The IP address for sharing the file
     QHostAddress ipAddress;

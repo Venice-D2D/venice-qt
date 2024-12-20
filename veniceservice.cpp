@@ -1,5 +1,6 @@
 #include "veniceservice.h"
 #include "venicebluetoothuuid.h"
+#include "filetransferservice.h"
 
 #include <QtDebug>
 #include <QFileDialog>
@@ -10,6 +11,8 @@
 #include <QLowEnergyServiceData>
 #include <QLowEnergyDescriptorData>
 #include <QtCore/qtimer.h>
+#include <QBluetoothHostInfo>
+#include <QBluetoothLocalDevice>
 
 #include <filesystem>
 #include <iostream>
@@ -20,12 +23,12 @@ using namespace std;
 VeniceService::VeniceService(QObject *parent, string filePath): QThread(parent)
 {
     this->filePath = filePath;
-    this->channel = new WifiDataChannel("192.168.1.1", "0.0.0.0", "255.255.255.0");
+    this->channel = new WifiDataChannel(); //("192.168.1.1", "0.0.0.0", "255.255.255.0");
 }
 
 VeniceService::~VeniceService()
 {
-    this->channel->restoreChannelConfiguration();
+    //this->channel->restoreChannelConfiguration();
     delete(this->channel);
 }
 
@@ -38,12 +41,25 @@ void VeniceService::run()
 
 void VeniceService::runFileServiceProvider()
 {
+
+    //Choose a suitable bluetooth adapter
+    this->selectBluetoothAdapter();
+
     //The file is only advertised if it exists
+    qDebug() << "Checking file: " << this->filePath.c_str();
     if(filesystem::exists(this->filePath))
     {
         qDebug() << "Configuring data channel...";
 
         this->configureDataChannel();
+
+        qDebug() << "Starting File Transfer Service...";
+        //QHostAddress address("192.168.1.1");
+        //qint16 port = 62526;
+
+        FileTransferService fileTransferService(nullptr, this->filePath.c_str(), this->channel->getNetworkAddress().ip(), this->channel->getPort());
+
+
 
         qDebug() << "Configuring BLE advertisement...";
 
@@ -72,8 +88,8 @@ void VeniceService::runFileServiceProvider()
         QLowEnergyCharacteristicData channelChacteristic;
         channelChacteristic.setUuid(VeniceBluetoothUuid::getWifiChannelCharacteristicType());
         channelChacteristic.setProperties(QLowEnergyCharacteristic::Read);
-        //TODO Update accoring the code for enabling exchange via wifi
-        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";192.168.1.2;"+this->channel->getAdhocNetworkName()+";0"; // chanel identifier, address, ssid (Ap identifier), key
+        //TODO Update according the code for enabling exchange via wifi
+        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";"+this->channel->getNetworkAddress().ip().toString().toStdString()+";"+this->channel->getSSID().toStdString()+";0"; // chanel identifier, address, ssid (Ap identifier), key
         channelChacteristic.setValue(QByteArray(channelCharacteristicValue.c_str()));
         const QLowEnergyDescriptorData clientConfigChannelCharacteristic(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
                                                     QByteArray(channelCharacteristicValue.c_str()));
@@ -108,7 +124,9 @@ void VeniceService::runFileServiceProvider()
         unique_ptr<QLowEnergyService> service(btController->addService(serviceData));
 
 
-        qDebug() << "Starting Service Advertiement";
+        qDebug() << "Starting Service Advertisement";
+
+
         btController->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData,
                                        advertisingData);
 
@@ -131,7 +149,6 @@ void VeniceService::runFileServiceProvider()
 
 vector<VeniceMessage> VeniceService::readFileData(const string& name, const int& max_size)
 {
-
     ifstream inputFile(name, ios_base::binary);
     vector<VeniceMessage> messages;
 
@@ -180,5 +197,32 @@ vector<VeniceMessage> VeniceService::readFileData(const string& name, const int&
 void VeniceService::configureDataChannel()
 {
     this->channel->configureChannel();
+}
+
+void VeniceService::selectBluetoothAdapter() throw()
+{
+    qDebug() << "Selecting a suitable bluetooth adapter devices...";
+    QList<QBluetoothHostInfo> localDevices = QBluetoothLocalDevice::allDevices();
+
+
+    //We look for the first avaiable and power on adapter
+    //TODO Filter by LE capability
+    for (const QBluetoothHostInfo &device : localDevices) {
+        qDebug() << "Adapter Name:" << device.name();
+        qDebug() << "Adapter Address:" << device.address().toString();
+        QBluetoothLocalDevice localBTDevice(device.address());
+
+        if (localBTDevice.isValid())
+            if (localBTDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
+            {
+                // We only use the device if it not turned of and if it is available
+                localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
+                qDebug() << "Selected!";
+                return;
+            }
+
+    }
+
+    throw NotBluetoothAdapterFoundVeniceException();
 }
 
