@@ -17,10 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+LIBS += -lprotobuf
+
 # Input
 HEADERS += \
     datachannel.h \
+    datachannelevents.h \
     errorstartingfiletransferserviceveniceexception.h \
+    external/protobuf/cpp_proto/venice.pb.h \
     filetransferservice.h \
     mainwindow.h \
     notavailableportfoundveniceexception.h \
@@ -30,12 +34,14 @@ HEADERS += \
     veniceexception.h \
     venicemessage.h \
     veniceservice.h \
+    venicetimer.h \
     wifidatachannel.h
 FORMS += \
     mainwindow.ui
 SOURCES += main.cpp \
     datachannel.cpp \
     errorstartingfiletransferserviceveniceexception.cpp \
+    external/protobuf/cpp_proto/venice.pb.cc \
     filetransferservice.cpp \
     mainwindow.cpp \
     notavailableportfoundveniceexception.cpp \
@@ -45,9 +51,9 @@ SOURCES += main.cpp \
     veniceexception.cpp \
     venicemessage.cpp \
     veniceservice.cpp \
+    venicetimer.cpp \
     wifidatachannel.cpp
 TRANSLATIONS += venice-qt_en_US.ts
-QT += widgets bluetooth core
+QT += widgets bluetooth core network
 CONFIG += c++23
-QT += network
 # DEFINES += QT_NO_DEBUG_OUTPUT
