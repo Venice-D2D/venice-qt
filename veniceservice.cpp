@@ -13,6 +13,7 @@
 #include <QtCore/qtimer.h>
 #include <QBluetoothHostInfo>
 #include <QBluetoothLocalDevice>
+#include <QMetaMethod>
 
 #include <filesystem>
 #include <iostream>
@@ -54,12 +55,12 @@ void VeniceService::runFileServiceProvider()
         this->configureDataChannel();
 
         qDebug() << "Starting File Transfer Service...";
-        //QHostAddress address("192.168.1.1");
-        //qint16 port = 62526;
 
-        FileTransferService fileTransferService(nullptr, this->filePath.c_str(), this->channel->getNetworkAddress().ip(), this->channel->getPort());
+        int msgMaxSize = MAX_MESSAGE_SIZE;
+        QVector<VeniceMessage*> fileMessages = this->readFileData(filePath, msgMaxSize);
 
 
+        FileTransferService fileTransferService(nullptr, this->filePath.c_str(), fileMessages, this->channel->getNetworkAddress().ip(), this->channel->getPort());
 
         qDebug() << "Configuring BLE advertisement...";
 
@@ -70,37 +71,41 @@ void VeniceService::runFileServiceProvider()
         fileChacteristic.setUuid(VeniceBluetoothUuid::getFileChacteristicType());
 
         string fileName = filesystem::path(filePath).filename(); //File Name
-        int msgMaxSize = MAX_MESSAGE_SIZE;
-        vector<VeniceMessage> messages = this->readFileData(filePath, msgMaxSize); //Venice messages related to the file
 
-        string fileCharacteristicValue = fileName+";"+to_string(msgMaxSize)+";"+to_string(messages.size()); //Characteristic value has the format <fileName>;<max_message_size;<number_of_messages>
+         //Venice messages related to the file
+
+        string fileCharacteristicValue = fileName+";"+to_string(msgMaxSize)+";"+to_string(fileMessages.size()); //Characteristic value has the format <fileName>;<max_message_size;<number_of_messages>
 
         fileChacteristic.setValue(QByteArray(fileCharacteristicValue.c_str()));
 
-        fileChacteristic.setProperties(QLowEnergyCharacteristic::Read); //We are only supposed to read
-        const QLowEnergyDescriptorData clientConfigFileCharacteristic(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
+        fileChacteristic.setProperties(QLowEnergyCharacteristic::PropertyType::Read); //We are only supposed to read
+
+        QLowEnergyDescriptorData clientConfigFileCharacteristicDescriptor(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
                                                     QByteArray(fileCharacteristicValue.c_str()));
-        fileChacteristic.addDescriptor(clientConfigFileCharacteristic);
+        clientConfigFileCharacteristicDescriptor.setReadPermissions(true);
+        fileChacteristic.addDescriptor(clientConfigFileCharacteristicDescriptor);
+
 
 
         //Channel Characteristic
         qDebug() << "Creating Channel Characteristic";
         QLowEnergyCharacteristicData channelChacteristic;
         channelChacteristic.setUuid(VeniceBluetoothUuid::getWifiChannelCharacteristicType());
-        channelChacteristic.setProperties(QLowEnergyCharacteristic::Read);
+        channelChacteristic.setProperties(QLowEnergyCharacteristic::PropertyType::Read);
         //TODO Update according the code for enabling exchange via wifi
-        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";"+this->channel->getNetworkAddress().ip().toString().toStdString()+";"+this->channel->getSSID().toStdString()+";0"; // chanel identifier, address, ssid (Ap identifier), key
+        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";"+this->channel->getNetworkAddress().ip().toString().toStdString()+";"+this->channel->getSSID().toStdString()      +";"+std::to_string(this->channel->getPort()); // chanel identifier, address, ssid (Ap identifier), key/port
         channelChacteristic.setValue(QByteArray(channelCharacteristicValue.c_str()));
-        const QLowEnergyDescriptorData clientConfigChannelCharacteristic(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
+        QLowEnergyDescriptorData clientConfigChannelCharacteristicDescriptor(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
                                                     QByteArray(channelCharacteristicValue.c_str()));
-        fileChacteristic.addDescriptor(clientConfigChannelCharacteristic);
+        clientConfigChannelCharacteristicDescriptor.setReadPermissions(true);
+        fileChacteristic.addDescriptor(clientConfigChannelCharacteristicDescriptor);
 
 
         //Service Data
         qDebug() << "Creating File Service data";
 
         QLowEnergyServiceData serviceData;
-        serviceData.setType(QLowEnergyServiceData::ServiceTypePrimary);
+        serviceData.setType(QLowEnergyServiceData::ServiceType::ServiceTypePrimary);
         serviceData.setUuid(VeniceBluetoothUuid::getVeniceFileServiceClassUuid());
 
         serviceData.addCharacteristic(fileChacteristic);
@@ -127,6 +132,15 @@ void VeniceService::runFileServiceProvider()
         qDebug() << "Starting Service Advertisement";
 
 
+        /*this->connect(btController, &QLowEnergyController::error, this, [](QLowEnergyController::Error error) {
+                    qWarning() << "BLE Error:" << error;
+                });*/
+        /*this->connect(btController, QMetaMethod::fromSignal(QLowEnergyController::), this, [](QLowEnergyController::ControllerState state) {
+                    qDebug() << "BLE State Changed:" << state;
+                });*/
+
+        qDebug() << "Starting BLE Advertising...";
+
         btController->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData,
                                        advertisingData);
 
@@ -147,10 +161,10 @@ void VeniceService::runFileServiceProvider()
     qDebug() << "File Service execution ended ";
 }
 
-vector<VeniceMessage> VeniceService::readFileData(const string& name, const int& max_size)
+QVector<VeniceMessage*> VeniceService::readFileData(const string& name, const int& max_size)
 {
     ifstream inputFile(name, ios_base::binary);
-    vector<VeniceMessage> messages;
+    QVector<VeniceMessage*> messages;
 
     // Determine the length of the file by seeking
     // to the end of the file, reading the value of the
@@ -182,7 +196,7 @@ vector<VeniceMessage> VeniceService::readFileData(const string& name, const int&
 
         copy(buffer.begin()+from_byte, buffer.begin()+from_byte+current_data_size, current_data.begin());
 
-        VeniceMessage current_message(current_position, false, current_data);
+        VeniceMessage* current_message= new VeniceMessage(current_position, false, current_data);
 
         messages.push_back(current_message);
 

@@ -54,9 +54,9 @@ private:
      * @brief readFileData read the file by separing into chunks of max_size
      * @param name The name of the file to be read
      * @param max_size The maximun size of chunks
-     * @return A vector containing VeniceMessage with data with a size less or equals than max_size
+     * @return A QVector containing VeniceMessages with data with a size less or equals than max_size
      */
-    vector<VeniceMessage> readFileData(const string& name, const int& max_size);
+    QVector<VeniceMessage*> readFileData(const string& name, const int& max_size);
 
     /**
      * @brief configureDataChannel Configures the datachannel related to the service

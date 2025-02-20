@@ -4,6 +4,7 @@
 #include <memory>
 #include <QApplication>
 #include <QGuiApplication>
+#include <QLoggingCategory>
 
 
 /**
@@ -18,6 +19,9 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.setMainApplication(&mainApplication);
     w.show();
+
+    QLoggingCategory::setFilterRules("qt.timer.debug=true");
+
 
     return mainApplication.exec();
 }

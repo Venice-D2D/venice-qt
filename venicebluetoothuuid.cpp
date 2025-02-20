@@ -19,6 +19,6 @@ QBluetoothUuid VeniceBluetoothUuid::getWifiChannelCharacteristicType()
 
 QBluetoothUuid VeniceBluetoothUuid::getVeniceFileServiceClassUuid()
 {
-    // Here we use of CharacteristicType that is a existing service
+    // Here we use of CharacteristicType that is an existing service
     return QBluetoothUuid::ServiceClassUuid::HeartRate;
 }
