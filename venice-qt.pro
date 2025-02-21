@@ -21,38 +21,38 @@ LIBS += -lprotobuf
 
 # Input
 HEADERS += \
-    datachannel.h \
-    datachannelevents.h \
-    errorstartingfiletransferserviceveniceexception.h \
+    include/channel/datachannel.h \
+    include/datachannelevents.h \
+    include/exception/errorstartingfiletransferserviceveniceexception.h \
     external/protobuf/cpp_proto/venice.pb.h \
-    filetransferservice.h \
-    mainwindow.h \
-    notavailableportfoundveniceexception.h \
-    notbluetoothadapterfoundveniceexception.h \
-    notsuitablewifiadapterfoundveniceexception.h \
-    venicebluetoothuuid.h \
-    veniceexception.h \
-    venicemessage.h \
-    veniceservice.h \
-    venicetimer.h \
-    wifidatachannel.h
+    include/service/filetransferservice.h \
+    include/ui/mainwindow.h \
+    include/exception/notavailableportfoundveniceexception.h \
+    include/exception/notbluetoothadapterfoundveniceexception.h \
+    include/exception/notsuitablewifiadapterfoundveniceexception.h \
+    include/service/venicebluetoothuuid.h \
+    include/exception/veniceexception.h \
+    include/network/venicemessage.h \
+    include/service/veniceservice.h \
+    include/event/venicetimer.h \
+    include/channel/wifidatachannel.h
 FORMS += \
-    mainwindow.ui
-SOURCES += main.cpp \
-    datachannel.cpp \
-    errorstartingfiletransferserviceveniceexception.cpp \
+    ui/mainwindow.ui
+SOURCES += src/main.cpp \
+    src/channel/datachannel.cpp \
+    src/exception/errorstartingfiletransferserviceveniceexception.cpp \
     external/protobuf/cpp_proto/venice.pb.cc \
-    filetransferservice.cpp \
-    mainwindow.cpp \
-    notavailableportfoundveniceexception.cpp \
-    notbluetoothadapterfoundveniceexception.cpp \
-    notsuitablewifiadapterfoundveniceexception.cpp \
-    venicebluetoothuuid.cpp \
-    veniceexception.cpp \
-    venicemessage.cpp \
-    veniceservice.cpp \
-    venicetimer.cpp \
-    wifidatachannel.cpp
+    src/service/filetransferservice.cpp \
+    src/ui/mainwindow.cpp \
+    src/exception/notavailableportfoundveniceexception.cpp \
+    src/exception/notbluetoothadapterfoundveniceexception.cpp \
+    src/exception/notsuitablewifiadapterfoundveniceexception.cpp \
+    src/service/venicebluetoothuuid.cpp \
+    src/exception/veniceexception.cpp \
+    src/network/venicemessage.cpp \
+    src/service/veniceservice.cpp \
+    src/event/venicetimer.cpp \
+    src/channel/wifidatachannel.cpp
 TRANSLATIONS += venice-qt_en_US.ts
 QT += widgets bluetooth core network
 CONFIG += c++23

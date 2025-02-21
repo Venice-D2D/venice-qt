@@ -1,6 +1,6 @@
-#include "veniceservice.h"
-#include "venicebluetoothuuid.h"
-#include "filetransferservice.h"
+#include "include/service/veniceservice.h"
+#include "include/service/venicebluetoothuuid.h"
+#include "include/service/filetransferservice.h"
 
 #include <QtDebug>
 #include <QFileDialog>

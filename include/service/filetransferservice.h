@@ -11,8 +11,8 @@
 
 #include <string>
 
-#include "venicemessage.h"
-#include "venicetimer.h"
+#include "include/network/venicemessage.h"
+#include "include/event/venicetimer.h"
 
 using namespace std;
 

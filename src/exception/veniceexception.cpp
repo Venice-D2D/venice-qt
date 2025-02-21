@@ -1,4 +1,4 @@
-#include "veniceexception.h"
+#include "include/exception/veniceexception.h"
 
 VeniceException::VeniceException(const char* message)
 {

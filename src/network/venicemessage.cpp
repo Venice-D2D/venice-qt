@@ -1,4 +1,4 @@
-#include "venicemessage.h"
+#include "include/network/venicemessage.h"
 
 VeniceMessage::VeniceMessage(int messageId, bool ack, vector<byte> data)
 {

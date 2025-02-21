@@ -1,6 +1,6 @@
-#include "mainwindow.h"
+#include "include/ui/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "veniceservice.h"
+#include "include/service/veniceservice.h"
 #include <memory>
 #include <QFileDialog>
 #include <iostream>

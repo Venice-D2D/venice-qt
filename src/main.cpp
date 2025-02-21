@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "veniceservice.h"
+#include "include/ui/mainwindow.h"
+#include "include/service/veniceservice.h"
 
 #include <memory>
 #include <QApplication>

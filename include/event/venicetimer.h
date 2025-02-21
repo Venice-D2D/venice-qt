@@ -2,7 +2,7 @@
 #define VENICETIMER_H
 
 #include <QTimer>
-#include "venicemessage.h"
+#include "include/network/venicemessage.h"
 
 class VeniceTimer : public QTimer
 {

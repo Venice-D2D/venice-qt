@@ -1,5 +1,5 @@
-#include "datachannel.h"
-#include "notsuitablewifiadapterfoundveniceexception.h"
+#include "include/channel/datachannel.h"
+#include "include/exception/notsuitablewifiadapterfoundveniceexception.h"
 
 DataChannel::DataChannel(QNetworkInterface::InterfaceType networkInterfaceType)
 {

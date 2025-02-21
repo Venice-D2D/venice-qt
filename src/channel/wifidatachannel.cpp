@@ -1,9 +1,9 @@
 #include <QTcpServer>
 #include <QProcess>
 
-#include "wifidatachannel.h"
-#include "notsuitablewifiadapterfoundveniceexception.h"
-#include "notavailableportfoundveniceexception.h"
+#include "include/channel/wifidatachannel.h"
+#include "include/exception/notsuitablewifiadapterfoundveniceexception.h"
+#include "include/exception/notavailableportfoundveniceexception.h"
 
 
 using namespace std;

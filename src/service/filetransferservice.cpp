@@ -1,5 +1,5 @@
-#include "filetransferservice.h"
-#include "errorstartingfiletransferserviceveniceexception.h"
+#include "include/service/filetransferservice.h"
+#include "include/exception/errorstartingfiletransferserviceveniceexception.h"
 #include "external/protobuf/cpp_proto/venice.pb.h"
 
 #include <QTcpSocket>

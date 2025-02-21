@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "veniceservice.h"
+#include "include/service/veniceservice.h"
 
 #include <QMainWindow>
 
