@@ -27,6 +27,12 @@ sudo apt install qtbase5-dev qt5-qmake qtconnectivity5-qtconnectivity5-dev cmake
 ```
 sudo apt install build-essential
 ```
+- Once the project is cloned, you need to update the submodules:
+
+```
+git submodule update --init --recursive
+```
+
 ## Build via the CLI with qmake
 - Exeute the following commands:
 ```
