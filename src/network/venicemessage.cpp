@@ -55,21 +55,10 @@ QByteArray VeniceMessage::toProtoBuf(){
 
     VeniceMessageProto protoMessage;
 
-    //protoMessage.set_data(this->data);
-
-    /*for(const byte &current_chunk : this->data){
-        protoMessage.add_data(current_chunk);
-    }*/
 
     qDebug() << "Adding data to protobuf message...";
 
     protoMessage.set_data(reinterpret_cast<const char*>(this->data.data()), this->data.size());
-
-    /*for (const byte &current_chunk : this->data) {
-
-        qDebug() << "Adding chunk to protobuf message...";
-        protoMessage.add_data(reinterpret_cast<const char*>(current_chunk));
-    }*/
 
 
     protoMessage.set_messageid(this->messageId);

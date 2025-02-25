@@ -7,9 +7,6 @@
 
 FileTransferService::FileTransferService(QObject *parent, const char* filePath, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port) throw(): QTcpServer(parent)
 {
-    //this->file_related_messages = file_related_messages;
-
-    //QHostAddress address("127.0.0.1");
     if(!this->listen(ipAddress, port))
     {
         qDebug() << "Issues starting FileTransferService";
@@ -40,11 +37,6 @@ FileTransferService::~FileTransferService()
 void FileTransferService::incomingConnection(qintptr socketDescriptor){
     qDebug() << "We got a connection...";
 
-    /*if (!this->fileToSend.open(QIODevice::ReadOnly)) {
-        qCritical() << "Failed to open file:" << this->fileToSend.errorString();
-        return;
-    }*/
-
     // Set the socket descriptor
     if (this->clientSocket->setSocketDescriptor(socketDescriptor)) {
 
@@ -57,13 +49,6 @@ void FileTransferService::incomingConnection(qintptr socketDescriptor){
 
         if(connect(this->clientSocket, &QTcpSocket::readyRead, this, &FileTransferService::onDataReadyToBeRead))
             qDebug() << "onDataReadyToBeRead connected!!";
-        /*connect(clientSocket, &QTcpSocket::readyRead, this, [clientSocket]() {
-            //QByteArray data = clientSocket->readAll();  // Read the incoming data
-            //qDebug() << "Received:" << data;
-
-            // Echo the data back to the client
-            clientSocket->write(QByteArray('test'));
-        });*/
 
         connect(this->clientSocket, &QTcpSocket::disconnected, clientSocket, &QTcpSocket::deleteLater);
 
@@ -71,12 +56,8 @@ void FileTransferService::incomingConnection(qintptr socketDescriptor){
 
         // Send the first message
         qDebug() << "Sending messages: "+QString::number(this->fileToSend.size());
-        //this->sendNextVeniceMessage();
         this->sendVeniceMessages();
 
-
-        //QByteArray fileSizeHeader = QByteArray::number(this->fileToSend.size()) + "\n";
-        //this->clientSocket->write(fileSizeHeader);
     } else {
         qDebug() << "Client connection not accepted...";
         delete clientSocket; // Cleanup in case of an error
@@ -146,8 +127,7 @@ void FileTransferService::sendVeniceMessages(){
             this->clientSocket->waitForReadyRead();
             while (resubmissionTimers.find(currentMessage->getMessageId())!= resubmissionTimers.end()) {
                 qDebug() << "Waiting for timer removal... ";
-                //waitingForAMessageTimer->start(200);
-                //this->onDataReadyToBeRead();
+                waitingForAMessageTimer->start(200);
             }
 
 
@@ -264,31 +244,6 @@ VeniceTimer* FileTransferService::sendVeniceMessage(VeniceMessage* message){
     {
         qDebug() << "signal and slot connected!";
     }
-
-    /*if(!QObject::connect(messageTimer, &QTimer::timeout, [this, message]() {
-
-        qDebug() << "Starting venice timer code execution with id ..."+ QString::number(message->getMessageId());
-        if(this->resubmissionTimers.find(message->getMessageId())!= this->resubmissionTimers.end()){
-            //QWriteLocker locker(&this->lock);
-            this->fileMessages.insert(0, message);
-
-            QMap<int, VeniceTimer*>::const_iterator timerIterator = this->resubmissionTimers.find(message->getMessageId());
-            VeniceTimer* currentTimer = timerIterator.value();
-            this->resubmissionTimers.remove(message->getMessageId());
-
-            delete currentTimer;
-            qDebug() << "Ended code related to venice timer with id..."+ QString::number(message->getMessageId());
-        }
-        qDebug() << "Ended Venice timer with id ..."+ QString::number(message->getMessageId());
-
-    }))
-    {
-        qDebug() << "Failed to connect signal and slot.";
-    }
-    else
-    {
-        qDebug() << "signal and slot connected!";
-    }*/
 
     return messageTimer;
 

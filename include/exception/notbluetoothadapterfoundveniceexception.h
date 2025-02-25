@@ -3,6 +3,10 @@
 
 #include "veniceexception.h"
 
+/**
+ * @brief The NotBluetoothAdapterFoundVeniceException class indicates that there
+ * is not a suitable bluetooth adapter for service advertisement
+ */
 class NotBluetoothAdapterFoundVeniceException : public VeniceException
 {
 public:

@@ -13,7 +13,7 @@
 using namespace std;
 
 /**
- * @brief The VeniceMessage class representing a message service containing required information for data exchange
+ * @brief The VeniceMessage class represents a message service containing required information for data exchange
  * between venice devices
  */
 class VeniceMessage

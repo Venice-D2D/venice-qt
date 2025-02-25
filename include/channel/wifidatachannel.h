@@ -6,7 +6,10 @@
 #include "datachannel.h"
 
 
-
+/**
+ * @brief The WifiDataChannel class represents a data channel that uses Wifi
+ * to exchange the data
+ */
 class WifiDataChannel: DataChannel
 {
 public:
@@ -74,17 +77,6 @@ public:
     QString getSSID();
 
 private:
-    // The ip related to the adapter
-    //const char* ip;
-
-    // The gateway related to the adapter
-    //const char* gateway;
-
-    // The netmask related to the adapter
-    //const char* netmask;
-
-    // Ad-hoc network name
-    //const char* adhocNetworkName;
 
     // The wifi interface related to this channel
     QNetworkInterface wifiInterface;

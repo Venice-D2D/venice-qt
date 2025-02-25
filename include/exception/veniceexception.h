@@ -3,8 +3,10 @@
 
 #include <vector>
 
-//using namespace std;
-
+/**
+ * @brief The VeniceException class represents the base class for all the venice's
+ * exceptions
+ */
 class VeniceException : public std::exception
 {
 

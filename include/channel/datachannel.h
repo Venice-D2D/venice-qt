@@ -36,6 +36,10 @@ static const char* IEEE1394 = "Ieee1394";
 
 static const char* UNKNOWN = "Unknown";
 
+/**
+ * @brief The DataChannel class allows to build data channels by providing the
+ * basic methods that are required
+ */
 class DataChannel
 {
 

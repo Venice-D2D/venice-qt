@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "include/service/veniceservice.h"
-
 #include <QMainWindow>
 
 #include <QLowEnergyAdvertisingData>
@@ -12,6 +10,8 @@
 #include <QLowEnergyServiceData>
 #include <QLowEnergyDescriptorData>
 #include <QtCore/qtimer.h>
+
+#include "include/service/veniceservice.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

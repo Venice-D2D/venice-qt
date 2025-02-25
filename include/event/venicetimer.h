@@ -4,11 +4,15 @@
 #include <QTimer>
 #include "include/network/venicemessage.h"
 
+/**
+ * @brief The VeniceTimer class represents a timer that enable to manage the Venice
+ * Messages between the provider and the customer
+ */
 class VeniceTimer : public QTimer
 {
 public:
     /**
-     * @brief VeniceTimer Create a time with the related message
+     * @brief VeniceTimer Create a timer with the related message
      * @param message The related VeniceMessage
      */
     VeniceTimer(VeniceMessage* message);

@@ -24,12 +24,11 @@ using namespace std;
 VeniceService::VeniceService(QObject *parent, string filePath): QThread(parent)
 {
     this->filePath = filePath;
-    this->channel = new WifiDataChannel(); //("192.168.1.1", "0.0.0.0", "255.255.255.0");
+    this->channel = new WifiDataChannel();
 }
 
 VeniceService::~VeniceService()
 {
-    //this->channel->restoreChannelConfiguration();
     delete(this->channel);
 }
 
@@ -132,26 +131,11 @@ void VeniceService::runFileServiceProvider()
         qDebug() << "Starting Service Advertisement";
 
 
-        /*this->connect(btController, &QLowEnergyController::error, this, [](QLowEnergyController::Error error) {
-                    qWarning() << "BLE Error:" << error;
-                });*/
-        /*this->connect(btController, QMetaMethod::fromSignal(QLowEnergyController::), this, [](QLowEnergyController::ControllerState state) {
-                    qDebug() << "BLE State Changed:" << state;
-                });*/
-
         qDebug() << "Starting BLE Advertising...";
 
         btController->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData,
                                        advertisingData);
 
-
-        //Signal-Slots are only required is a write capabily is related to the service
-        //QTimer veniceTimer;
-
-        //const auto veniceProvider = [&service]() {
-        //};
-        //this->connect(&veniceTimer, &QTimer::timeout, veniceProvider);
-        //veniceTimer.start(1000);
 
         this->exec();
 

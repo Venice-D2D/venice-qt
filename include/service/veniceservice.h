@@ -10,7 +10,10 @@
 
 using namespace std;
 
-
+/**
+ * @brief The VeniceService class orchestrates the service advertisement and data
+ * exchange
+ */
 class VeniceService: public QThread
 {
         Q_OBJECT
