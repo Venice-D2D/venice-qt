@@ -7,27 +7,32 @@ Desktop implemetation of venice en C++ and QT
 - Make version 4.2.1 or higher
 - Protobuf 3.21.12 or higuer
 
+### Pre-requisites Installation in Ubuntu 24.04
+- For installing QT, QMake, CMake with related Bluetooth dependencies :
+
+```
+sudo apt install qtbase5-dev qt5-qmake qtconnectivity5-dev cmake build-essential
+```
+- Installer protobuf compiler
+```
+sudo apt install -y protobuf-compiler
+```
+- If an official version of protobuf compiler 3.21.12 or higuer is not available on your distribution, you can installe it by hand:
+```
+wget https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.21.12.tar.gz
+tar -xvf v3.21.12.tar.gz
+cd protobuf-3.21.12/
+./autogen.sh
+./configure
+make -j$(nproc)
+sudo make install
+sudo ldconfig
+sudo ln -s /usr/local/bin/protoc /usr/bin/protoc
+```
+
 ## Update Git Submodules
 
 After clonning the repository, execute the following commands
-
-```
-git submodule update --init --recursive
-git submodule update --recursive
-```
-
-### Pre-requisites Installation in Ubuntu 22.04
-- For installing QT et QMake with related Bluetooth dependencies :
-
-```
-sudo apt install qtbase5-dev qt5-qmake qtconnectivity5-qtconnectivity5-dev cmake
-```
-- If you find the issue `Project ERROR: Cannot run compiler 'g++'` you can also install `build-essential`
-
-```
-sudo apt install build-essential
-```
-- Once the project is cloned, you need to update the submodules:
 
 ```
 git submodule update --init --recursive
@@ -37,6 +42,7 @@ git submodule update --init --recursive
 - Exeute the following commands:
 ```
 cd qmake
+chmod u+x build.sh
 ./build.sh
 ```
 
@@ -75,15 +81,3 @@ sudo ./venice-qt
           - ble_bootstrap_channel-XXXX
           - ble_bootstrap_channel
           - views/copypaste/sender_view.dart
-- To install by hand protobuf 3.21.12 execute the following commands:
-```
-wget https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.21.12.tar.gz
-tar -xvf v3.21.12.tar.gz
-cd protobuf-3.21.12/
-./autogen.sh
-./configure
-make -j$(nproc)
-sudo make install
-sudo ldconfig
-sudo ln -s /usr/local/bin/protoc /usr/bin/protoc
-```
