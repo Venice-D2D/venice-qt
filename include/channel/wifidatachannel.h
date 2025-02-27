@@ -1,28 +1,24 @@
 #ifndef WIFIDATACHANNEL_H
 #define WIFIDATACHANNEL_H
 
-#include <string>
-
 #include "datachannel.h"
+#include "include/exception/notsuitablewifiadapterfoundveniceexception.h"
+#include "include/exception/notavailableportfoundveniceexception.h"
+
+#include <string>
 
 
 /**
  * @brief The WifiDataChannel class represents a data channel that uses Wifi
  * to exchange the data
  */
-class WifiDataChannel: DataChannel
+class WifiDataChannel: public DataChannel
 {
 public:
 
     const int STARTING_PORT = 20000;
     const int ENDING_PORT = 30000;
-    /**
-     * /@brief WiDataChannel constructor
-     * @param ip The ip address related to the channel
-     * @param gateway The gateway related to the channel
-     * @param netmask The netmask related to the channel
-     */
-    //WifiDataChannel(const char* ip,const char* gateway,const char* netmask);
+
 
     /**
      * @brief WifiDataChannel default constructor
@@ -36,21 +32,16 @@ public:
 
 
     /**
-     * @brief configureChannel Configures the ip and port for exchanging files
+     * @brief configure Configures the ip and port for exchanging files
      * @throw NotSuitableWifiAdapterFoundVeniceException If a wifi adapter with an IP and avaible port are not found
      */
-    void configureChannel();
+    void configure() throw();
 
     /**
      * @brief restoreChannelConfiguration Restores the channel original configuration
      */
     void restoreChannelConfiguration();
 
-    /**
-     * @brief getAdhocNetworkName Returns the name of the Adhoc-Network
-     * @return  The name of the Adhoc-Network
-     */
-    //const char* getAdhocNetworkName();
 
     /**
      * @brief getPort returns the used port for file exchanging
@@ -98,13 +89,13 @@ private:
      * @brief searchForAvailablePort Look for an available port in the current wifi interface
      * @throw NotAvailablePortFoundVeniceException if an available port is not found by using the configured ports limits
      */
-    void searchForAvailablePort() throw();
+    void searchForAvailablePort();
 
     /**
      * @brief searchForSSID Uses the nmcli command in order to get the wifi network name by using the channel ip
      * @throw NotWifiAdapterFoundVeniceException if there is not a wifi network adapter
      */
-    void searchForSSID() throw();
+    void searchForSSID();
 
 
 };

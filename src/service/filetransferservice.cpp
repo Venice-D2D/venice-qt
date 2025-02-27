@@ -1,252 +1,228 @@
 #include "include/service/filetransferservice.h"
-#include "include/exception/errorstartingfiletransferserviceveniceexception.h"
-#include "external/protobuf/cpp_proto/venice.pb.h"
-
-#include <QTcpSocket>
 
 
-FileTransferService::FileTransferService(QObject *parent, const char* filePath, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port) throw(): QTcpServer(parent)
+#include <QtDebug>
+#include <QFileDialog>
+#include <QLowEnergyAdvertisingData>
+#include <QLowEnergyController>
+#include <QLowEnergyAdvertisingParameters>
+#include <QLowEnergyCharacteristicData>
+#include <QLowEnergyServiceData>
+#include <QLowEnergyDescriptorData>
+#include <QtCore/qtimer.h>
+#include <QMetaMethod>
+
+#include <filesystem>
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+FileTransferService::FileTransferService(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, QObject *parent): QThread(parent)
 {
-    if(!this->listen(ipAddress, port))
-    {
-        qDebug() << "Issues starting FileTransferService";
-        throw ErrorStartingFileTransferServiceVeniceException();
-
-    }
-    qDebug() << "Listening on "<< this->serverAddress() << this->serverPort() << this->serverError();
-
-    this->fileToSend.setFileName(filePath);
-
-    this->fileMessages = fileMessages;
-
-    this->clientSocket = new QTcpSocket(this);
-
-    this->resubmissionTimers = {};
-
-    this->useProtobuf = true;
-
+    this->filePath = filePath;
+    this->dataChannel = dataChannel;
+    this->bootstrapChannel = boostrapChannel;
 }
 
 FileTransferService::~FileTransferService()
 {
-    delete this->clientSocket;
-    this->close();
+    delete(this->dataChannel);
+    delete(this->bootstrapChannel);
 }
 
+void FileTransferService::run()
+{
+    this->runFileServiceProvider();
 
-void FileTransferService::incomingConnection(qintptr socketDescriptor){
-    qDebug() << "We got a connection...";
-
-    // Set the socket descriptor
-    if (this->clientSocket->setSocketDescriptor(socketDescriptor)) {
-
-        //connect(this->clientSocket, &QTcpSocket::bytesWritten, this, &FileTransferService::onBytesWritten);
-        qDebug() << "Usage of port "<< QString::number(this->clientSocket->localPort());
-        qDebug() << "Usage of adress "<< this->clientSocket->localAddress();
-
-        connect(this->clientSocket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error),
-                    this, &FileTransferService::onError);
-
-        if(connect(this->clientSocket, &QTcpSocket::readyRead, this, &FileTransferService::onDataReadyToBeRead))
-            qDebug() << "onDataReadyToBeRead connected!!";
-
-        connect(this->clientSocket, &QTcpSocket::disconnected, clientSocket, &QTcpSocket::deleteLater);
-
-        qDebug() << "New connection established!";
-
-        // Send the first message
-        qDebug() << "Sending messages: "+QString::number(this->fileToSend.size());
-        this->sendVeniceMessages();
-
-    } else {
-        qDebug() << "Client connection not accepted...";
-        delete clientSocket; // Cleanup in case of an error
-    }
+    qDebug() << "Finishing VeniceService Thread";
 }
 
-void FileTransferService::onBytesWritten(qint64 bytes) {
-    this->sendNextVeniceMessage();
-}
+void FileTransferService::runFileServiceProvider()
+{
 
-void FileTransferService::onError(QAbstractSocket::SocketError socketError) {
-    qCritical() << "Socket error:" << socketError;
-}
+    //Choose a suitable bluetooth adapter
+    this->configureBoostrapChannel();
 
-void FileTransferService::onDataReadyToBeRead(){
-
-    if (this->clientSocket->state() == QTcpSocket::ConnectedState) {
-        qDebug() << "Socket is connected.";
-    } else {
-        qDebug() << "Socket is not connected. Current state:" << this->clientSocket->state();
-        qDebug() << this->clientSocket->errorString();
-    }
-
-    qDebug() << "New data received...";
-
-    QByteArray data = this->clientSocket->readAll();  // Read the incoming data
-    qDebug() << "Received:" << data;
-
-    VeniceMessage message = VeniceMessage::fromJson(data);
-    if(message.isAck())
+    //The file is only advertised if it exists
+    qDebug() << "Checking file: " << this->filePath.c_str();
+    if(filesystem::exists(this->filePath))
     {
-        QWriteLocker locker(&this->lock);
-        QMap<int, VeniceTimer*>::const_iterator timerIterator = this->resubmissionTimers.find(message.getMessageId());
+        qDebug() << "Configuring data channel...";
 
-        if(timerIterator!= this->resubmissionTimers.end())
-        {
-            VeniceTimer* currentTimer = timerIterator.value();
-            currentTimer->stop();
-            this->resubmissionTimers.remove(message.getMessageId());
-            delete currentTimer->getMessage();
-            delete currentTimer;
-        }
+        this->configureDataChannel();
+
+        qDebug() << "Starting File Transfer Service...";
+
+        int msgMaxSize = MAX_MESSAGE_SIZE;
+        QVector<VeniceMessage*> fileMessages = this->readFileData(filePath, msgMaxSize);
+
+        WifiDataChannel* wifiDataChannel = dynamic_cast<WifiDataChannel*>(this->dataChannel);
+
+
+        FileTransferServer fileTransferServer(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort());
+
+        qDebug() << "Configuring BLE advertisement...";
+
+        //File Characteristic creation
+        qDebug() << "Creating File Characteristic";
+
+        QLowEnergyCharacteristicData fileChacteristic;
+        fileChacteristic.setUuid(VeniceBluetoothUuid::getFileChacteristicType());
+
+        string fileName = filesystem::path(filePath).filename(); //File Name
+
+         //Venice messages related to the file
+
+        string fileCharacteristicValue = fileName+";"+to_string(msgMaxSize)+";"+to_string(fileMessages.size()); //Characteristic value has the format <fileName>;<max_message_size;<number_of_messages>
+
+        fileChacteristic.setValue(QByteArray(fileCharacteristicValue.c_str()));
+
+        fileChacteristic.setProperties(QLowEnergyCharacteristic::PropertyType::Read); //We are only supposed to read
+
+        QLowEnergyDescriptorData clientConfigFileCharacteristicDescriptor(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
+                                                    QByteArray(fileCharacteristicValue.c_str()));
+        clientConfigFileCharacteristicDescriptor.setReadPermissions(true);
+        fileChacteristic.addDescriptor(clientConfigFileCharacteristicDescriptor);
+
+
+
+        //Channel Characteristic
+        qDebug() << "Creating Channel Characteristic";
+        QLowEnergyCharacteristicData channelChacteristic;
+        channelChacteristic.setUuid(VeniceBluetoothUuid::getWifiChannelCharacteristicType());
+        channelChacteristic.setProperties(QLowEnergyCharacteristic::PropertyType::Read);
+        //TODO Update according the code for enabling exchange via wifi
+        string channelCharacteristicValue = WIFI_DATA_CHANNEL+";"+wifiDataChannel->getNetworkAddress().ip().toString().toStdString()+";"+wifiDataChannel->getSSID().toStdString()      +";"+std::to_string(wifiDataChannel->getPort()); // chanel identifier, address, ssid (Ap identifier), key/port
+        channelChacteristic.setValue(QByteArray(channelCharacteristicValue.c_str()));
+        QLowEnergyDescriptorData clientConfigChannelCharacteristicDescriptor(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
+                                                    QByteArray(channelCharacteristicValue.c_str()));
+        clientConfigChannelCharacteristicDescriptor.setReadPermissions(true);
+        fileChacteristic.addDescriptor(clientConfigChannelCharacteristicDescriptor);
+
+
+        //Service Data
+        qDebug() << "Creating File Service data";
+
+        QLowEnergyServiceData serviceData;
+        serviceData.setType(QLowEnergyServiceData::ServiceType::ServiceTypePrimary);
+        serviceData.setUuid(VeniceBluetoothUuid::getVeniceFileServiceClassUuid());
+
+        serviceData.addCharacteristic(fileChacteristic);
+        serviceData.addCharacteristic(channelChacteristic);
+
+        //Advertisement data
+        qDebug() << "Creating Advertisement data";
+
+        QLowEnergyAdvertisingData advertisingData;
+        advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
+        advertisingData.setIncludePowerLevel(true);
+        advertisingData.setLocalName("venice");
+        advertisingData.setServices(QList<QBluetoothUuid>() << VeniceBluetoothUuid::getVeniceFileServiceClassUuid());
+
+        //Service Data
+        qDebug() << "Creating service Controller";
+        const unique_ptr<QLowEnergyController> btController(QLowEnergyController::createPeripheral());
+
+        //Creating File Service
+        qDebug() << "Creating File Service";
+        unique_ptr<QLowEnergyService> service(btController->addService(serviceData));
+
+
+        qDebug() << "Starting Service Advertisement";
+
+
+        qDebug() << "Starting BLE Advertising...";
+
+        btController->startAdvertising(QLowEnergyAdvertisingParameters(), advertisingData,
+                                       advertisingData);
+
+
+        this->exec();
+
+        btController->stopAdvertising();
     }
 
+    qDebug() << "File Service execution ended ";
 }
 
-void FileTransferService::sendVeniceMessages(){
+QVector<VeniceMessage*> FileTransferService::readFileData(const string& name, const int& max_size)
+{
+    ifstream inputFile(name, ios_base::binary);
+    QVector<VeniceMessage*> messages;
 
-    QTimer* waitingForAMessageTimer = new QTimer();
+    // Determine the length of the file by seeking
+    // to the end of the file, reading the value of the
+    // position indicator, and then seeking back to the beginning.
+    inputFile.seekg(0, ios_base::end);
+    int length = inputFile.tellg();
+    inputFile.seekg(0, ios_base::beg);
 
-    while(!this->fileMessages.isEmpty() || !this->resubmissionTimers.isEmpty())
+    // Make a buffer of the exact size of the file and read the data into it.
+    vector<byte> buffer(length);
+    inputFile.read(reinterpret_cast<char*>(buffer.data()), length);
+
+    // We divide the buffer in chunks with max_size as length
+    int from_byte = 0;
+    int current_position = 0;
+
+    while(from_byte<=length-1)
     {
-        if(this->fileMessages.isEmpty())
+
+        int current_data_size = max_size;
+
+        if((from_byte+max_size-1) > length)
         {
-            waitingForAMessageTimer->start(200);
+
+            current_data_size = length - from_byte;
         }
-        else
-        {
-            VeniceMessage* currentMessage = this->fileMessages.first();
-            this->fileMessages.remove(0);
-            VeniceTimer* messageTimer = this->sendVeniceMessage(currentMessage);
 
-            qDebug() << "Starting venice timer with id ..."+ QString::number(currentMessage->getMessageId());
-            messageTimer->start(1000);
+        vector<byte> current_data(current_data_size);
 
-            qDebug() << "Message sent via sendVeniceMessage... ";
-            this->clientSocket->waitForReadyRead();
-            while (resubmissionTimers.find(currentMessage->getMessageId())!= resubmissionTimers.end()) {
-                qDebug() << "Waiting for timer removal... ";
-                waitingForAMessageTimer->start(200);
+        copy(buffer.begin()+from_byte, buffer.begin()+from_byte+current_data_size, current_data.begin());
+
+        VeniceMessage* current_message= new VeniceMessage(current_position, false, current_data);
+
+        messages.push_back(current_message);
+
+        current_position++;
+        from_byte+= current_data_size;
+    }
+
+    inputFile.close();
+    return messages;
+}
+
+void FileTransferService::configureDataChannel() throw()
+{
+    this->dataChannel->configure();
+}
+
+void FileTransferService::configureBoostrapChannel() throw()
+{
+    this->bootstrapChannel->configure();
+    /*qDebug() << "Selecting a suitable bluetooth adapter devices...";
+    QList<QBluetoothHostInfo> localDevices = QBluetoothLocalDevice::allDevices();
+
+
+    //We look for the first avaiable and power on adapter
+    //TODO Filter by LE capability
+    for (const QBluetoothHostInfo &device : localDevices) {
+        qDebug() << "Adapter Name:" << device.name();
+        qDebug() << "Adapter Address:" << device.address().toString();
+        QBluetoothLocalDevice localBTDevice(device.address());
+
+        if (localBTDevice.isValid())
+            if (localBTDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
+            {
+                // We only use the device if it not turned off and if it is available
+                localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
+                qDebug() << "Selected!";
+                return;
             }
 
-
-        }
-
     }
 
-    delete waitingForAMessageTimer;
-    this->clientSocket->disconnectFromHost();
-
+    throw NotBluetoothAdapterFoundVeniceException();*/
 }
-
-void FileTransferService::sendNextVeniceMessage(){
-    QWriteLocker locker(&this->lock);
-    if(!this->fileMessages.isEmpty() || !this->resubmissionTimers.isEmpty()){
-
-        QTimer* waitingForAMessageTimer = new QTimer();
-
-        if(this->fileMessages.isEmpty())
-        {
-            waitingForAMessageTimer->start(200);
-        }
-        else
-        {
-            VeniceMessage* currentMessage = this->fileMessages.first();
-            this->fileMessages.remove(0);
-
-            qDebug() << "Sending message with id... " + QString::number(currentMessage->getMessageId());
-            this->clientSocket->write(currentMessage->toJson());
-            qDebug() << "Message sent... ";
-            this->clientSocket->flush();
-
-            qDebug() << "Creating Venice timer... ";
-            VeniceTimer* messageTimer = new VeniceTimer(currentMessage);
-            messageTimer->setSingleShot(true);
-            int messageId = currentMessage->getMessageId();
-            this->resubmissionTimers.insert(messageId,messageTimer);
-
-            // We add the message again to the list of messages if the acknowledgement does not
-            // arrive
-
-            QObject::connect(messageTimer, &QTimer::timeout, [this, currentMessage]() {
-
-                if(this->resubmissionTimers.find(currentMessage->getMessageId())!= this->resubmissionTimers.end()){
-                    QWriteLocker locker(&this->lock);
-                    this->fileMessages.insert(0, currentMessage);
-
-                    QMap<int, VeniceTimer*>::const_iterator timerIterator = this->resubmissionTimers.find(currentMessage->getMessageId());
-                    VeniceTimer* currentTimer = timerIterator.value();
-                    this->resubmissionTimers.remove(currentMessage->getMessageId());
-
-                    delete currentTimer;
-                    qDebug() << "Ended code related to venice timer with id..."+ QString::number(currentMessage->getMessageId());
-                }
-                qDebug() << "Ended Venice timer with id ..."+ QString::number(currentMessage->getMessageId());
-
-            });
-            qDebug() << "Starting venice timer with id ..."+ QString::number(currentMessage->getMessageId());
-            messageTimer->start(1000);
-         }
-    }
-    else{
-        this->clientSocket->disconnectFromHost();
-    }
-
-
-}
-
-
-VeniceTimer* FileTransferService::sendVeniceMessage(VeniceMessage* message){
-    //QWriteLocker locker(&this->lock);
-
-    qDebug() << "Sending message with id... " + QString::number(message->getMessageId());
-    QByteArray serializedMessage;
-
-    if(this->useProtobuf)
-    {
-        qDebug() << "Protobuf serialization... ";
-        serializedMessage = message->toProtoBuf();
-    }
-    else
-    {
-        qDebug() << "JSON serialization... ";
-        serializedMessage = message->toJson();
-    }
-
-    qDebug() << "Writing the message... ";
-
-    this->clientSocket->write(serializedMessage);
-    this->clientSocket->flush();
-    this->clientSocket->waitForBytesWritten();
-
-    qDebug() << "Message sent... ";
-
-    qDebug() << "Creating Venice timer... ";
-    VeniceTimer* messageTimer = new VeniceTimer(message);
-    messageTimer->setSingleShot(true);
-    int messageId = message->getMessageId();
-    this->resubmissionTimers.insert(messageId,messageTimer);
-
-    // We add the message again to the list of messages if the acknowledgement does not
-    // arrive
-
-    if(!QObject::connect(messageTimer, &QTimer::timeout, []() {
-
-        qDebug() << "Starting venice timer code execution";
-
-
-    }))
-    {
-        qDebug() << "Failed to connect signal and slot.";
-    }
-    else
-    {
-        qDebug() << "signal and slot connected!";
-    }
-
-    return messageTimer;
-
-}
-
 

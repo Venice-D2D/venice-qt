@@ -23,10 +23,12 @@ add_definitions(-DQT_DEPRECATED_WARNINGS)
 # Source files
 set(SOURCES
     src/main.cpp
+    src/channel/channel.cpp
     src/channel/datachannel.cpp
     src/exception/errorstartingfiletransferserviceveniceexception.cpp
     external/protobuf/cpp_proto/venice.pb.cc
     src/service/filetransferservice.cpp
+    src/service/filetransferserver.cpp
     src/ui/mainwindow.cpp
     src/exception/notavailableportfoundveniceexception.cpp
     src/exception/notbluetoothadapterfoundveniceexception.cpp
@@ -34,14 +36,15 @@ set(SOURCES
     src/service/venicebluetoothuuid.cpp
     src/exception/veniceexception.cpp
     src/network/venicemessage.cpp
-    src/service/veniceservice.cpp
     src/event/venicetimer.cpp
     src/channel/wifidatachannel.cpp
+    src/channel/blebootstrapchannel.cpp
+    src/channel/bootstrapchannel.cpp
 )
 
 set(HEADERS
     include/ui/mainwindow.h
-    include/service/veniceservice.h
+    include/service/filetransferservice.h
 )
 
 qt5_wrap_cpp(MOC_SOURCES ${HEADERS})

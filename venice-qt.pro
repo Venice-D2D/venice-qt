@@ -21,10 +21,10 @@ LIBS += -lprotobuf
 
 # Input
 HEADERS += \
-    include/channel/datachannel.h \
     include/datachannelevents.h \
     include/exception/errorstartingfiletransferserviceveniceexception.h \
     external/protobuf/cpp_proto/venice.pb.h \
+    include/service/filetransferserver.h \
     include/service/filetransferservice.h \
     include/ui/mainwindow.h \
     include/exception/notavailableportfoundveniceexception.h \
@@ -33,15 +33,18 @@ HEADERS += \
     include/service/venicebluetoothuuid.h \
     include/exception/veniceexception.h \
     include/network/venicemessage.h \
-    include/service/veniceservice.h \
     include/event/venicetimer.h \
-    include/channel/wifidatachannel.h
+    include/channel/blebootstrapchannel.h \
+    include/channel/bootstrapchannel.h \
+    include/channel/channel.h \
+    include/channel/datachannel.h \
+    include/channel/wifidatachannel.h \
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
-    src/channel/datachannel.cpp \
     src/exception/errorstartingfiletransferserviceveniceexception.cpp \
     external/protobuf/cpp_proto/venice.pb.cc \
+    src/service/filetransferserver.cpp \
     src/service/filetransferservice.cpp \
     src/ui/mainwindow.cpp \
     src/exception/notavailableportfoundveniceexception.cpp \
@@ -50,9 +53,12 @@ SOURCES += src/main.cpp \
     src/service/venicebluetoothuuid.cpp \
     src/exception/veniceexception.cpp \
     src/network/venicemessage.cpp \
-    src/service/veniceservice.cpp \
     src/event/venicetimer.cpp \
-    src/channel/wifidatachannel.cpp
+    src/channel/channel.cpp \
+    src/channel/datachannel.cpp \
+    src/channel/wifidatachannel.cpp \
+    src/channel/bootstrapchannel.cpp \
+    src/channel/blebootstrapchannel.cpp
 TRANSLATIONS += venice-qt_en_US.ts
 QT += widgets bluetooth core network
 CONFIG += c++23

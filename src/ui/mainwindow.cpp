@@ -1,6 +1,6 @@
 #include "include/ui/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "include/service/veniceservice.h"
+
 #include <memory>
 #include <QFileDialog>
 #include <iostream>
@@ -37,10 +37,12 @@ void MainWindow::on_sendFileButton_clicked()
 
     if(!filePath.isEmpty())
     {
-        veniceService = new VeniceService(this, filePath.toStdString());
+        DataChannel* dataChannel = new WifiDataChannel();
+        BootstrapChannel* boostrapChannel = new BleBootstrapChannel();
+        this->veniceService = new FileTransferService(dataChannel, boostrapChannel, filePath.toStdString(), this);
 
         //We associated the signal aboutToQuit with a lamba function that stop the service as slot
-        this->connect(this->mainApplication, &QApplication::aboutToQuit, veniceService, [=]{
+        this->connect(this->mainApplication, &QApplication::aboutToQuit, veniceService, [this]{
             veniceService->quit();
             veniceService->wait(5000);});
         veniceService->start();

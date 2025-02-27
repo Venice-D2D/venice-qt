@@ -1,6 +1,8 @@
 #ifndef VENICEMESSAGE_H
 #define VENICEMESSAGE_H
 
+#include "external/protobuf/cpp_proto/venice.pb.h"
+
 #include <vector>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -8,7 +10,7 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "external/protobuf/cpp_proto/venice.pb.h"
+
 
 using namespace std;
 

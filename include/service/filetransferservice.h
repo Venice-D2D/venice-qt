@@ -1,101 +1,92 @@
-#ifndef FILETRANSFERSERVICE_H
-#define FILETRANSFERSERVICE_H
-
-
-#include <QTcpServer>
-#include <QNetworkInterface>
-#include <QFile>
-#include <QMap>
-#include <QVector>
-#include <QReadWriteLock>
-
-#include <string>
+#ifndef VENICESERVICE_H
+#define VENICESERVICE_H
 
 #include "include/network/venicemessage.h"
-#include "include/event/venicetimer.h"
+#include "include/channel/datachannel.h"
+#include "include/channel/bootstrapchannel.h"
+#include "include/channel/wifidatachannel.h"
+#include "include/service/venicebluetoothuuid.h"
+#include "include/service/filetransferserver.h"
+
+
+#include <QtCore/QThread>
+#include <string>
+#include <QTcpSocket>
 
 using namespace std;
 
-
-
 /**
- * @brief The FileTransferService class enables file transfers via the Wifi Channel
+ * @brief The VeniceService class orchestrates the service advertisement and data
+ * exchange
  */
-class FileTransferService:  public QTcpServer
+class FileTransferService: public QThread
 {
-
+        Q_OBJECT
 public:
     /**
-     * @brief FileTransferService constructor of the service which creates a TCP Server
-     * @param parent of the service
-     * @param filePath The path to the file to be shared
-     * @param fileMessages Messages containing the file data
-     * @param ipAddress The IP address for sharing the file
-     * @param port The port used for listening
+     * @brief VeniceServiceThread constructor
+     * @param dataChannel
+     * @param boostrapChannel
+     * @param filePath The path of the file to be transfered
+     * @param parent of the thread. It is a MainWindow instance
      */
-    FileTransferService(QObject *parent, const char* filePath, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port) throw();
+    FileTransferService(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, QObject *parent = nullptr);
 
     /**
-      * @brief ~FileTransferService destructor of the service that closes the TCP server
+      * @brief VeniceServiceThread destructor
       */
     ~FileTransferService();
 
+    /**
+     * @brief run executes the thread
+     */
+    void run() override;
 
 private:
-    // The port for listening
-    int port;
 
-    // The file path
-    //const char* filePath;
+    // The path of the file to be shared
+    string filePath;
 
-    // The IP address for sharing the file
-    QHostAddress ipAddress;
+    //Max message size in Venice
+    const int MAX_MESSAGE_SIZE = 1000;
+    const string WIFI_DATA_CHANNEL = "wifi_data_channel";
 
-    //The messages related to the file
-    //vector<VeniceMessage> file_related_messages;
+    //The object to configure and manage the data channel
+    DataChannel *dataChannel;
 
-    //The file descriptor related to the file to be sent
-    QFile fileToSend;
+    //The object to configure and manage the bootstrap channel
+    BootstrapChannel *bootstrapChannel;
 
-    //The socket to interact with the client receiving the file
-    QTcpSocket *clientSocket;
-
-
-    //The list of messages related to the file to send
-    QVector<VeniceMessage*> fileMessages;
-
-    QMap<int, VeniceTimer*> resubmissionTimers;
-
-    //Lock used for thread safe management of file_messages and resubmissionTimers
-    QReadWriteLock lock;
-
-    //Use proto buffer protocol for serialization
-    bool useProtobuf;
-
-
-
-private slots:
-    void onBytesWritten(qint64 bytes);
-    void onError(QAbstractSocket::SocketError socketError);
-    void onDataReadyToBeRead();
-
-protected:
-
-    void incomingConnection(qintptr socketDescriptor) override;
+    //TCP Server used to deal with file transfer
+    QTcpServer tcpServer(nullptr_t);
 
     /**
-     * @brief sendVeniceMessage Send the next available message and configure a timer for waiting the message acknoledgement
+     * @brief runFileServiceProvider creates and run the venice service
+     * @param thread executing the service
      */
-    void sendNextVeniceMessage();
+    void runFileServiceProvider();
 
     /**
-     * @brief sendVeniceMessages Send messages related to file. It considers not only fileMessages vector but also resubmission timers map
+     * @brief readFileData read the file by separing into chunks of max_size
+     * @param name The name of the file to be read
+     * @param max_size The maximun size of chunks
+     * @return A QVector containing VeniceMessages with data with a size less or equals than max_size
      */
-    void sendVeniceMessages();
+    QVector<VeniceMessage*> readFileData(const string& name, const int& max_size);
 
-    VeniceTimer* sendVeniceMessage(VeniceMessage* message);
+    /**
+     * @brief configureDataChannel Configures the data channel related to the service
+     * @exception VeniceException if there is an issue configuration the channel
+     */
+    void configureDataChannel() throw();
+
+    /**
+     * @brief configureBoostrapAdapter Configures the boostrap channel related to the service
+     * @exception VeniceException if there is an issue configuration the channel
+     */
+    void configureBoostrapChannel() throw();
 
 
 };
 
-#endif // FILETRANSFERSERVICE_H
+#endif // VENICESERVICE_H

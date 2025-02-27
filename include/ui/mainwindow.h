@@ -11,7 +11,11 @@
 #include <QLowEnergyDescriptorData>
 #include <QtCore/qtimer.h>
 
-#include "include/service/veniceservice.h"
+#include "include/service/filetransferservice.h"
+#include "include/channel/datachannel.h"
+#include "include/channel/bootstrapchannel.h"
+#include "include/channel/wifidatachannel.h"
+#include "include/channel/blebootstrapchannel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -84,7 +88,7 @@ private:
     Ui::MainWindow *ui;
 
     //The venice service thread
-    VeniceService *veniceService= nullptr;
+    FileTransferService *veniceService= nullptr;
 
     //The main application
     QApplication *mainApplication= nullptr;

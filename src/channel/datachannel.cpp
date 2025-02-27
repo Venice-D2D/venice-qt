@@ -65,7 +65,7 @@ QString DataChannel::getNetworkInterfaceNameByType(QNetworkInterface::InterfaceT
     return interfaceName;
 }
 
-QNetworkInterface DataChannel::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType) throw()
+QNetworkInterface DataChannel::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType)
 {
     QNetworkInterface networkInterface;
 

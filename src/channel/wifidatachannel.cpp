@@ -1,9 +1,10 @@
+#include "include/channel/wifidatachannel.h"
+
+
 #include <QTcpServer>
 #include <QProcess>
 
-#include "include/channel/wifidatachannel.h"
-#include "include/exception/notsuitablewifiadapterfoundveniceexception.h"
-#include "include/exception/notavailableportfoundveniceexception.h"
+
 
 
 using namespace std;
@@ -19,7 +20,7 @@ WifiDataChannel::~WifiDataChannel()
     //system("service NetworkManager start");
 }
 
-void WifiDataChannel::configureChannel()
+void WifiDataChannel::configure() throw()
 {
     this->wifiInterface = DataChannel::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType::Wifi);
     qDebug() << "Wifi Adapter set!";
@@ -66,7 +67,7 @@ QNetworkAddressEntry WifiDataChannel::getNetworkAddress()
     return this->wifiInterface.addressEntries().first();
 }
 
-void WifiDataChannel::searchForAvailablePort() throw()
+void WifiDataChannel::searchForAvailablePort()
 {
     QTcpServer server; //Server to check that the port is available
 
@@ -89,7 +90,7 @@ void WifiDataChannel::searchForAvailablePort() throw()
 
 }
 
-void WifiDataChannel::searchForSSID() throw()
+void WifiDataChannel::searchForSSID()
 {
     //Get all wifi adapters with its ssid, device name and status (active = yes or not).
     //The colons names are removed (-t option) - Several results are possible:
@@ -99,7 +100,7 @@ void WifiDataChannel::searchForSSID() throw()
     QString nmcliWifiAdapterFilter = "nmcli -t -f ssid,device,active device wifi";
 
     //The IP of related to the channel
-    QString ip = this->getNetworkAddress().ip().toString(); //.toStdString(); //toUtf8().constData();
+    QString ip = this->getNetworkAddress().ip().toString();
 
     //Filter the wifi adapters as inputs for only considering the ones with a given device name
     //The device name is getted by using the channel ip - Several results are possible.

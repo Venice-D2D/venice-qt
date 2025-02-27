@@ -1,6 +1,7 @@
 #ifndef DATACHANNEL_H
 #define DATACHANNEL_H
 
+#include "channel.h"
 
 #include <QNetworkInterface>
 
@@ -40,7 +41,7 @@ static const char* UNKNOWN = "Unknown";
  * @brief The DataChannel class allows to build data channels by providing the
  * basic methods that are required
  */
-class DataChannel
+class DataChannel: public Channel
 {
 
 public:
@@ -59,7 +60,7 @@ public:
     /**
      * @brief configureChannel Configures the channel in order to be used
      */
-    virtual void configureChannel() = 0;
+    virtual void configure() throw()= 0;
 
     /**
      * @brief restoreChannelConfiguration Restores the channel original configuration
@@ -92,7 +93,7 @@ public:
      * @return The first network found of the given type or null if an interface is not found
      * @throw NotSuitableWifiAdapterFoundVeniceException if an adapter of the given type is not found
      */
-    static QNetworkInterface searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType) throw();
+    static QNetworkInterface searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType);
 
 protected:
     // The network interface type

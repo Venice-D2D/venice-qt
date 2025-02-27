@@ -1,5 +1,5 @@
 #include "include/ui/mainwindow.h"
-#include "include/service/veniceservice.h"
+#include "include/service/filetransferservice.h"
 
 #include <memory>
 #include <QApplication>
