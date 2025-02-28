@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.27)
+cmake_policy(SET CMP0156 NEW)
+
 project(venice-qt LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -9,6 +11,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+
+
 
 # Find Qt5 packages
 find_package(Qt5 REQUIRED COMPONENTS Widgets Bluetooth Core Network)

@@ -8,5 +8,5 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR" || exit 1
 
 make clean
-cmake --debug-output ..
+cmake ..
 make -j$(nproc)
