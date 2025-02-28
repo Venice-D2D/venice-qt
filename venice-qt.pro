@@ -38,7 +38,7 @@ HEADERS += \
     include/channel/bootstrapchannel.h \
     include/channel/channel.h \
     include/channel/datachannel.h \
-    include/channel/wifidatachannel.h \
+    include/channel/wifidatachannel.h
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
@@ -62,4 +62,6 @@ SOURCES += src/main.cpp \
 TRANSLATIONS += venice-qt_en_US.ts
 QT += widgets bluetooth core network
 CONFIG += c++23
-# DEFINES += QT_NO_DEBUG_OUTPUT
+QMAKE_CXXFLAGS -= -Wunused-variable
+QMAKE_CXXFLAGS += -Wno-unused-variable
+#DEFINES += QT_NO_DEBUG_OUTPUT

@@ -3,3 +3,7 @@
 BootstrapChannel::BootstrapChannel()
 {
 }
+
+BootstrapChannel::~BootstrapChannel()
+{
+}

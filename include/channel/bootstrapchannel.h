@@ -11,6 +11,11 @@ public:
      */
     BootstrapChannel();
 
+    /**
+     * @brief ~DataChannel destructor of the class
+     */
+    virtual ~BootstrapChannel();
+
 };
 
 #endif // BOOTSTRAPCHANNEL_H

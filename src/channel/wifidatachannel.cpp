@@ -34,7 +34,6 @@ void WifiDataChannel::configure() throw()
 
 void WifiDataChannel::restoreChannelConfiguration()
 {
-    system("systemctl start NetworkManager");
 }
 
 void WifiDataChannel::executeSystemCommand(const char* command)

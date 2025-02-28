@@ -59,7 +59,7 @@ void FileTransferServer::incomingConnection(qintptr socketDescriptor){
     }
 }
 
-void FileTransferServer::onBytesWritten(qint64 bytes) {
+void FileTransferServer::onBytesWritten(__attribute__((unused))qint64 bytes) {
     this->sendNextVeniceMessage();
 }
 
