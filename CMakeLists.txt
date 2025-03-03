@@ -44,6 +44,7 @@ set(SOURCES
     src/channel/wifidatachannel.cpp
     src/channel/blebootstrapchannel.cpp
     src/channel/bootstrapchannel.cpp
+    src/tool/terminallanguagemanager.cpp
 )
 
 set(HEADERS

@@ -4,9 +4,6 @@
 #include <QTcpServer>
 #include <QProcess>
 
-
-
-
 using namespace std;
 
 
@@ -91,6 +88,20 @@ void WifiDataChannel::searchForAvailablePort()
 
 void WifiDataChannel::searchForSSID()
 {
+
+    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+
+        for (const QNetworkInterface &interface : interfaces) {
+            if (interface.flags().testFlag(QNetworkInterface::IsUp) &&
+                interface.flags().testFlag(QNetworkInterface::IsRunning) &&
+                !interface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
+
+                if (interface.type() == QNetworkInterface::Wifi) { // Only check Wi-Fi interfaces
+                    qDebug() << "Wi-Fi Adapter Found:" << interface.humanReadableName();
+                }
+            }
+        }
+
     //Get all wifi adapters with its ssid, device name and status (active = yes or not).
     //The colons names are removed (-t option) - Several results are possible:
     //eduroam:wlp3s0:yes
@@ -120,7 +131,7 @@ void WifiDataChannel::searchForSSID()
                                                      " | grep -E \"GENERAL.DEVICE\"|awk '{print $2}')";
 
     //Filter the wifi adapters to get only the one that is active
-    QString grepWifiAdapterFilterByStatus = "grep ':yes'";
+    QString grepWifiAdapterFilterByStatus = "grep ':"+this->languageManager.getYesValueAccordingToOSLanguage()+"'";
 
     //Extract the ssid related to the active wifi adapter
     QString grepWifiAdapterSSIDFilter = "grep -o '^[^:]*'";

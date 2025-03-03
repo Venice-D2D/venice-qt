@@ -4,6 +4,7 @@
 #include "datachannel.h"
 #include "include/exception/notsuitablewifiadapterfoundveniceexception.h"
 #include "include/exception/notavailableportfoundveniceexception.h"
+#include "include/tool/terminallanguagemanager.h"
 
 #include <string>
 
@@ -77,6 +78,9 @@ private:
 
     // The name of the wifi name for this channel
     QString ssid;
+
+    //The OS language manager
+    TerminalLanguageManager languageManager;
 
     /**
       * @brief executeSystemCommand Executes the provided command

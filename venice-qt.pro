@@ -38,10 +38,12 @@ HEADERS += \
     include/channel/bootstrapchannel.h \
     include/channel/channel.h \
     include/channel/datachannel.h \
-    include/channel/wifidatachannel.h
+    include/channel/wifidatachannel.h \
+    include/tool/terminallanguagemanager.h
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
+    src/tool/terminallanguagemanager.cpp \
     src/exception/errorstartingfiletransferserviceveniceexception.cpp \
     external/protobuf/cpp_proto/venice.pb.cc \
     src/service/filetransferserver.cpp \
