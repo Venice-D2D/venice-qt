@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QVector>
 #include <QReadWriteLock>
+#include <QTcpSocket>
 
 #include <string>
 

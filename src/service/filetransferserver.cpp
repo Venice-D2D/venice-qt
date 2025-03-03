@@ -2,9 +2,6 @@
 #include "include/exception/errorstartingfiletransferserviceveniceexception.h"
 #include "external/protobuf/cpp_proto/venice.pb.h"
 
-#include <QTcpSocket>
-
-
 FileTransferServer::FileTransferServer(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port): QTcpServer(parent)
 {
     if(!this->listen(ipAddress, port))
