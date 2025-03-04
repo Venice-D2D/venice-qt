@@ -74,7 +74,7 @@ QNetworkInterface DataChannel::searchNetworkInterfaceByType(QNetworkInterface::I
 
     for(QNetworkInterface currentInterface: currentInterfaces)
     {
-        if(currentInterface.type()== networkInterfaceType)
+        if(currentInterface.type()== networkInterfaceType && currentInterface.flags().testFlag(QNetworkInterface::IsUp) && currentInterface.flags().testFlag(QNetworkInterface::IsRunning) && currentInterface.flags().testFlag(QNetworkInterface::IsRunning) && !currentInterface.flags().testFlag(QNetworkInterface::IsLoopBack))
         {
             networkInterface = currentInterface;
 
