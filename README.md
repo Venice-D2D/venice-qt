@@ -3,7 +3,7 @@ Desktop implemetation of venice en C++ and QT
 
 ## Pre-requisites
 - QMake version 3.1 or higher or CMake 3.29 or higuer
-- Qt version 5.12.8 or higher
+- Qt version 5.12.8 or 5.15.13
 - Make version 4.2.1 or higher
 - Protobuf 3.21.12 or higuer
 
@@ -59,7 +59,7 @@ chmod u+x build.sh
 ```
 cd build
 chmod u+x build.sh
-sudo ./venice-qt
+sudo -E ./venice-qt
 ```
 
   - `sudo` privileges are required in order to access the Bluetooth adapter
