@@ -8,40 +8,30 @@ BleBootstrapChannel::BleBootstrapChannel():BootstrapChannel()
 
 void BleBootstrapChannel::configure()
 {
-    qDebug() << "Selecting a suitable bluetooth adapter devices...";
+    qDebug() << "Selecting a suitable bluetooth adapter device...";
 
-    QBluetoothLocalDevice defaultLocalBTDevice;
 
-    if(defaultLocalBTDevice.address().isNull())
-    {
-        QList<QBluetoothHostInfo> localDevices = QBluetoothLocalDevice::allDevices();
+    QList<QBluetoothHostInfo> localDevices = QBluetoothLocalDevice::allDevices();
 
-        //We look for the first avaiable and power on adapter
-        //TODO Filter by LE capability
-        for (const QBluetoothHostInfo &device : localDevices) {
-            qDebug() << "Adapter Name:" << device.name();
-            qDebug() << "Adapter Address:" << device.address().toString();
-            QBluetoothLocalDevice localBTDevice(device.address());
+    qDebug() << "BT devices size: "<< localDevices.size();
+    //We look for the first avaiable and power on adapter
+    //TODO Filter by LE capability
+    for(int current_device_index = localDevices.size()-1; current_device_index >=0; current_device_index--){
+        const QBluetoothHostInfo &device = localDevices.at(current_device_index);
+        qDebug() << "Adapter Name:" << device.name();
+        qDebug() << "Adapter Address:" << device.address().toString();
+        QBluetoothLocalDevice localBTDevice(device.address());
 
-            if (this->checkBleAdapter(localBTDevice))
-            {
-                // We only use the device if it not turned off and if it is available
-                localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
-                qDebug() << "Selected!";
-                return;
-            }
-
+        if(this->checkBleAdapter(localBTDevice))
+        {
+            // We only use the device if it not turned off and if it is available
+            localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
+            qDebug() << "Selected!";
+            return;
         }
+
     }
-    else if(this->checkBleAdapter(defaultLocalBTDevice))
-    {
-        // We only use the device if it not turned off and if it is available
-        defaultLocalBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
-        qDebug() << "Default Adapter Name:" << defaultLocalBTDevice.name();
-        qDebug() << "Default Adapter Address:" << defaultLocalBTDevice.address().toString();
-        qDebug() << "Selected!";
-        return;
-    }
+
 
     throw NotBluetoothAdapterFoundVeniceException();
 }
