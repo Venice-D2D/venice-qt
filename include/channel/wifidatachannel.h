@@ -6,6 +6,7 @@
 #include "include/exception/notavailableportfoundveniceexception.h"
 #include "include/tool/terminallanguagemanager.h"
 
+#include <QNetworkInterface>
 #include <string>
 
 

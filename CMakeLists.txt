@@ -44,6 +44,7 @@ set(SOURCES
     src/channel/blebootstrapchannel.cpp
     src/channel/bootstrapchannel.cpp
     src/tool/terminallanguagemanager.cpp
+    src/tool/networkinformationmanager.cpp
 )
 
 set(HEADERS

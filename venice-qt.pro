@@ -39,10 +39,12 @@ HEADERS += \
     include/channel/channel.h \
     include/channel/datachannel.h \
     include/channel/wifidatachannel.h \
-    include/tool/terminallanguagemanager.h
+    include/tool/terminallanguagemanager.h \
+    include/tool/networkinformationmanager.h
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
+    src/tool/networkinformationmanager.cpp \
     src/tool/terminallanguagemanager.cpp \
     src/exception/errorstartingfiletransferserviceveniceexception.cpp \
     external/protobuf/cpp_proto/venice.pb.cc \

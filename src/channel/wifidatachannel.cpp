@@ -1,4 +1,5 @@
 #include "include/channel/wifidatachannel.h"
+#include "include/tool/networkinformationmanager.h"
 
 
 #include <QTcpServer>
@@ -19,7 +20,8 @@ WifiDataChannel::~WifiDataChannel()
 
 void WifiDataChannel::configure() throw()
 {
-    this->wifiInterface = DataChannel::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType::Wifi);
+    this->wifiInterface = NetworkInformationManager::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType::Wifi);
+    this->networkInterfaceName = this->wifiInterface.name();
     qDebug() << "Wifi Adapter set!";
 
     this->searchForAvailablePort();
@@ -89,9 +91,7 @@ void WifiDataChannel::searchForAvailablePort()
 void WifiDataChannel::searchForSSID()
 {
 
-    QString adapterName = this->wifiInterface.name();
-
-    const QString commandToGetSSID = "iwgetid "+adapterName+" -r";
+    const QString commandToGetSSID = "iwgetid "+this->networkInterfaceName+" -r";
 
     QProcess processCommandExecution;
     QStringList arguments;
