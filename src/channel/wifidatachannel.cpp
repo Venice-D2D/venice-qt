@@ -89,59 +89,10 @@ void WifiDataChannel::searchForAvailablePort()
 void WifiDataChannel::searchForSSID()
 {
 
-    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+    QString adapterName = this->wifiInterface.name();
 
-        for (const QNetworkInterface &interface : interfaces) {
-            if (interface.flags().testFlag(QNetworkInterface::IsUp) &&
-                interface.flags().testFlag(QNetworkInterface::IsRunning) &&
-                !interface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
+    const QString commandToGetSSID = "iwgetid "+adapterName+" -r";
 
-                if (interface.type() == QNetworkInterface::Wifi) { // Only check Wi-Fi interfaces
-                    qDebug() << "Wi-Fi Adapter Found:" << interface.humanReadableName();
-                }
-            }
-        }
-
-    //Get all wifi adapters with its ssid, device name and status (active = yes or not).
-    //The colons names are removed (-t option) - Several results are possible:
-    //eduroam:wlp3s0:yes
-    //INRIA-interne:wlp3s0:no
-    //INRIA-guest:wlp3s0:no
-    QString nmcliWifiAdapterFilter = "nmcli -t -f ssid,device,active device wifi";
-
-    //The IP of related to the channel
-    QString ip = this->getNetworkAddress().ip().toString();
-
-    //Filter the wifi adapters as inputs for only considering the ones with a given device name
-    //The device name is getted by using the channel ip - Several results are possible.
-    // - nmcli -f GENERAL.DEVICE,IP4.ADDRESS device show :
-    //      GENERAL.DEVICE:                         wlp3s0
-    //      IP4.ADDRESS[1]:                         192.168.1.20/24
-    //      GENERAL.DEVICE:                         eno1
-    //      IP4.ADDRESS[1]:                         193.51.235.150/25
-    // - grep -B 1 <HOST_IP> (taking as input the previous nmcli output)
-    //      GENERAL.DEVICE:                         wlp3s0
-    //      IP4.ADDRESS[1]:                         192.168.1.20/24
-    // - grep -E "GENERAL.DEVICE" taking as input the previous grep output)
-    //      GENERAL.DEVICE:                         wlp3s0
-    // - awk '{print $2}' taking as input the previous grep output)
-
-    QString grepWifiAdaptersFilterByDeviceName = "grep $(nmcli -f GENERAL.DEVICE,IP4.ADDRESS device show "
-                                                     "| grep -B 1 \""+ip+"\""+
-                                                     " | grep -E \"GENERAL.DEVICE\"|awk '{print $2}')";
-
-    //Filter the wifi adapters to get only the one that is active
-    QString grepWifiAdapterFilterByStatus = "grep ':"+this->languageManager.getYesValueAccordingToOSLanguage()+"'";
-
-    //Extract the ssid related to the active wifi adapter
-    QString grepWifiAdapterSSIDFilter = "grep -o '^[^:]*'";
-
-   const QString commandToGetSSID = nmcliWifiAdapterFilter+"|"+
-                               grepWifiAdaptersFilterByDeviceName+"|"+
-                               grepWifiAdapterFilterByStatus+"|"+
-                               grepWifiAdapterSSIDFilter;
-
-   //Command execution
     QProcess processCommandExecution;
     QStringList arguments;
 
@@ -161,21 +112,15 @@ void WifiDataChannel::searchForSSID()
 
     }
 
-   // Capture the ssid
-   qDebug().noquote() << "Command to get the ssid"<< commandToGetSSID;
-   this->ssid = processCommandExecution.readAllStandardOutput();
+    // Capture the ssid
+    qDebug().noquote() << "Command to get the ssid"<< commandToGetSSID;
+    this->ssid = processCommandExecution.readAllStandardOutput();
 
-   qDebug() << "errors... " << processCommandExecution.readAllStandardError();
+    qDebug() << "errors... " << processCommandExecution.readAllStandardError();
 
-   qDebug().noquote() << "Result of the command for ssid"<< this->ssid;
+    qDebug().noquote() << "Result of the command for ssid"<< this->ssid;
 
-   if(this->ssid.isNull() || this->ssid.isEmpty())
-       throw NotSuitableWifiAdapterFoundVeniceException();
+    if(this->ssid.isNull() || this->ssid.isEmpty())
+        throw NotSuitableWifiAdapterFoundVeniceException();
 
 }
-
-
-
-
-
-
