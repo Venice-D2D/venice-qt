@@ -2,14 +2,14 @@
 #include "include/exception/errorstartingfiletransferserviceveniceexception.h"
 #include "external/protobuf/cpp_proto/venice.pb.h"
 
-FileTransferServer::FileTransferServer(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port): QTcpServer(parent)
+FileTransferServer::FileTransferServer(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferService *fileTransferService): QTcpServer(parent)
 {
-    if(!this->listen(ipAddress, port))
-    {
-        qDebug() << "Issues starting FileTransferService";
-        throw ErrorStartingFileTransferServiceVeniceException();
+    this->ipAddress = ipAddress;
+    this->port = port;
+    this->fileTransferService = fileTransferService;
 
-    }
+    this->listen();
+
     qDebug() << "Listening on "<< this->serverAddress() << this->serverPort() << this->serverError();
 
     this->fileMessages = fileMessages;
@@ -33,12 +33,10 @@ void FileTransferServer::incomingConnection(qintptr socketDescriptor){
 
     // Set the socket descriptor
     if (this->clientSocket->setSocketDescriptor(socketDescriptor)) {
-
-        //connect(this->clientSocket, &QTcpSocket::bytesWritten, this, &FileTransferService::onBytesWritten);
         qDebug() << "Usage of port "<< QString::number(this->clientSocket->localPort());
         qDebug() << "Usage of adress "<< this->clientSocket->localAddress();
 
-        connect(this->clientSocket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error),
+        connect(this->clientSocket, &QTcpSocket::errorOccurred,
                     this, &FileTransferServer::onError);
 
         if(connect(this->clientSocket, &QTcpSocket::readyRead, this, &FileTransferServer::onDataReadyToBeRead))
@@ -48,6 +46,15 @@ void FileTransferServer::incomingConnection(qintptr socketDescriptor){
 
         qDebug() << "New connection established!";
 
+        //qDebug() << "Re-start the file transfer service";
+        //qDebug() << "Quit";
+        //this->fileTransferService->quit();
+        //qDebug() << "Wait";
+        //this->fileTransferService->wait();
+        //qDebug() << "Start";
+        //this->fileTransferService->start();
+
+        qDebug() << "sending the messages";
         this->sendVeniceMessages();
 
     } else {
@@ -239,6 +246,16 @@ VeniceTimer* FileTransferServer::sendVeniceMessage(VeniceMessage* message){
 
     return messageTimer;
 
+}
+
+void FileTransferServer::listenForConnections()
+{
+    if(!this->listen(this->ipAddress, this->port))
+    {
+        qDebug() << "Issues configuring FileTransferService";
+        throw ErrorStartingFileTransferServiceVeniceException();
+
+    }
 }
 
 

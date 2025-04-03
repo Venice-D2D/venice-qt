@@ -1,5 +1,9 @@
 #include "include/ui/mainwindow.h"
 #include "ui_mainwindow.h"
+#include "include/channel/datachannel.h"
+#include "include/channel/wifidatachannel.h"
+#include "include/channel/blebootstrapchannel.h"
+#include "include/consumer/filetransferservicediscoverer.h"
 
 #include <memory>
 #include <QFileDialog>
@@ -38,7 +42,7 @@ void MainWindow::on_sendFileButton_clicked()
     if(!filePath.isEmpty())
     {
         DataChannel* dataChannel = new WifiDataChannel();
-        BootstrapChannel* boostrapChannel = new BleBootstrapChannel();
+        BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
         this->veniceService = new FileTransferService(dataChannel, boostrapChannel, filePath.toStdString(), this);
 
         //We associated the signal aboutToQuit with a lamba function that stop the service as slot
@@ -57,6 +61,7 @@ void MainWindow::doPopup()
 
 }
 
+// Send Panel
 void MainWindow::on_browseSendFileButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -68,13 +73,9 @@ void MainWindow::on_browseSendFileButton_clicked()
         ui->selectedSendFileLineEdit->setText(fileName);
         ui->sendFileButton->setEnabled(true);
     }
-
-
 }
 
-void MainWindow::on_receiveFileButton_clicked()
-{
-}
+
 
 void MainWindow::on_bleSendRadioButton_clicked()
 {
@@ -95,4 +96,56 @@ void MainWindow::on_wifiSendRadioButton_clicked()
         ui->browseSendFileButton->setEnabled(true);
     else
         ui->browseSendFileButton->setEnabled(false);
+}
+
+//Receive panel
+
+void MainWindow::on_receiveFileButton_clicked()
+{
+    BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
+
+    FileTransferServiceDiscoverer bleDiscover(boostrapChannel);
+
+
+    QString directoryPath= ui->selectedReceiveFileLineEdit->text();
+
+    if(!directoryPath.isEmpty())
+        bleDiscover.runDiscoverer();
+
+}
+
+void MainWindow::on_bleReceiveRadioButton_clicked()
+{
+
+    if(ui->bleReceiveRadioButton->isChecked())
+        ui->wifiReceiveRadioButton->setEnabled(true);
+    else
+    {
+        ui->wifiReceiveRadioButton->setEnabled(false);
+        ui->wifiReceiveRadioButton->setChecked(false);
+        ui->browseReceiveFileButton->setEnabled(false);
+    }
+}
+
+void MainWindow::on_wifiReceiveRadioButton_clicked()
+{
+    if(ui->wifiReceiveRadioButton->isChecked())
+        ui->browseReceiveFileButton->setEnabled(true);
+    else
+        ui->browseReceiveFileButton->setEnabled(false);
+
+}
+
+void MainWindow::on_browseReceiveFileButton_clicked()
+{
+    QString directoryName = QFileDialog::getExistingDirectory(this,
+                                                    tr("Select Directory"), QDir::homePath());
+
+
+    if(!directoryName.isEmpty())
+    {
+        ui->selectedReceiveFileLineEdit->setText(directoryName);
+        ui->receiveFileButton->setEnabled(true);
+    }
+
 }

@@ -12,10 +12,7 @@
 #include <QtCore/qtimer.h>
 
 #include "include/service/filetransferservice.h"
-#include "include/channel/datachannel.h"
-#include "include/channel/bootstrapchannel.h"
-#include "include/channel/wifidatachannel.h"
-#include "include/channel/blebootstrapchannel.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -67,10 +64,7 @@ private slots:
      */
     void on_browseSendFileButton_clicked();
 
-    /**
-     * @brief on_receiveFileButton_clicked
-     */
-    void on_receiveFileButton_clicked();
+
 
     /**
      * @brief on_bleSendRadioButton_clicked enables/disables the wifi radio button
@@ -81,6 +75,28 @@ private slots:
      * @brief on_wifiSendRadioButton_clicked enables/disables the send file button
      */
     void on_wifiSendRadioButton_clicked();
+
+    //Receive Panel
+
+    /**
+     * @brief on_receiveFileButton_clicked starts the ble device discoverer
+     */
+    void on_receiveFileButton_clicked();
+
+    /**
+     * @brief on_bleReceiveSendRadioButton enables/disables the receive file button
+     */
+    void on_bleReceiveRadioButton_clicked();
+
+    /**
+     * @brief on_wifiReceiveRadioButton_clicked enables/disables the receive file button
+     */
+    void on_wifiReceiveRadioButton_clicked();
+
+    /**
+     * @brief on_browseReceiveFileButton_clicked shows a browser file windows for selecting a directory to store the file
+     */
+    void on_browseReceiveFileButton_clicked();
 
 
 private:

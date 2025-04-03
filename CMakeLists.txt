@@ -13,8 +13,8 @@ set(CMAKE_AUTORCC ON)
 
 
 
-# Find Qt5 packages
-find_package(Qt5 REQUIRED COMPONENTS Widgets Bluetooth Core Network)
+# Find Qt6 packages
+find_package(Qt6 REQUIRED COMPONENTS Widgets Bluetooth Core Network)
 
 # Find Protobuf
 find_package(Protobuf REQUIRED)
@@ -45,6 +45,7 @@ set(SOURCES
     src/channel/bootstrapchannel.cpp
     src/tool/terminallanguagemanager.cpp
     src/tool/networkinformationmanager.cpp
+    src/consumer/filetransferservicediscoverer.cpp
 )
 
 set(HEADERS
@@ -52,15 +53,9 @@ set(HEADERS
     include/service/filetransferservice.h
 )
 
-qt5_wrap_cpp(MOC_SOURCES ${HEADERS})
-
-#set(FORMS
-#    /home/daniel/Documents/git-repository/d2d/venice_qt/venice-qt/ui/mainwindow.ui
-#)
+qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
 # Generate H files for UI file by indicating their path
-#qt5_wrap_ui(UI_HEADERS ${FORMS})
-#qt_add_ui_files(UI_HEADERS ${FORMS})
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 
 
@@ -79,9 +74,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Link with Qt and Protobuf
 target_link_libraries(${PROJECT_NAME}
-    Qt5::Widgets
-    Qt5::Bluetooth
-    Qt5::Core
-    Qt5::Network
+    Qt6::Widgets
+    Qt6::Bluetooth
+    Qt6::Core
+    Qt6::Network
     ${Protobuf_LIBRARIES}
 )

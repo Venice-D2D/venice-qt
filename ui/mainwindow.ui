@@ -27,7 +27,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="receiveTab">
      <property name="enabled">
@@ -53,7 +53,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -63,26 +62,28 @@
      <attribute name="title">
       <string>Receive</string>
      </attribute>
-     <widget class="QRadioButton" name="bleReceiveSendRadioButton">
+     <widget class="QRadioButton" name="bleReceiveRadioButton">
       <property name="enabled">
        <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>40</y>
+        <y>80</y>
         <width>104</width>
         <height>21</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
        </font>
       </property>
       <property name="text">
        <string>BLE</string>
+      </property>
+      <property name="autoExclusive">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QLabel" name="DCReceiveSendLabel">
@@ -91,8 +92,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>70</y>
+        <x>10</x>
+        <y>120</y>
         <width>121</width>
         <height>16</height>
        </rect>
@@ -103,38 +104,42 @@
      </widget>
      <widget class="QRadioButton" name="wifiReceiveRadioButton">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>90</y>
+        <y>140</y>
         <width>104</width>
         <height>21</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
        </font>
       </property>
       <property name="text">
        <string>Wifi</string>
       </property>
+      <property name="autoExclusive">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QPushButton" name="receiveFileButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>130</y>
+        <x>240</x>
+        <y>270</y>
         <width>90</width>
         <height>28</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
         <bold>false</bold>
        </font>
       </property>
@@ -148,8 +153,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>20</y>
+        <x>10</x>
+        <y>40</y>
         <width>131</width>
         <height>16</height>
        </rect>
@@ -159,6 +164,35 @@
       </property>
       <property name="text">
        <string>Bootstrap Channel</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="browseReceiveFileButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>270</y>
+        <width>90</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Browse...</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="selectedReceiveFileLineEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>113</width>
+        <height>28</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -199,7 +233,6 @@
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -269,7 +302,6 @@
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -308,7 +340,7 @@
      <x>0</x>
      <y>0</y>
      <width>383</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

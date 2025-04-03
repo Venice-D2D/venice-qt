@@ -3,10 +3,9 @@
 
 #include "include/network/venicemessage.h"
 #include "include/channel/datachannel.h"
-#include "include/channel/bootstrapchannel.h"
+#include "include/channel/blebootstrapchannel.h"
 #include "include/channel/wifidatachannel.h"
 #include "include/service/venicebluetoothuuid.h"
-#include "include/service/filetransferserver.h"
 
 
 #include <QtCore/QThread>
@@ -14,6 +13,8 @@
 #include <QTcpSocket>
 
 using namespace std;
+
+class FileTransferServer;
 
 /**
  * @brief The VeniceService class orchestrates the service advertisement and data
@@ -26,11 +27,11 @@ public:
     /**
      * @brief VeniceServiceThread constructor
      * @param dataChannel
-     * @param boostrapChannel
+     * @param bleBoostrapChannel
      * @param filePath The path of the file to be transfered
      * @param parent of the thread. It is a MainWindow instance
      */
-    FileTransferService(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, QObject *parent = nullptr);
+    FileTransferService(DataChannel *dataChannel, BleBootstrapChannel *bleBoostrapChannel, string filePath, QObject *parent = nullptr);
 
     /**
       * @brief VeniceServiceThread destructor
@@ -41,6 +42,12 @@ public:
      * @brief run executes the thread
      */
     void run() override;
+
+    /**
+     * @brief configureBoostrapAdapter Configures the boostrap channel related to the service
+     * @exception VeniceException if there is an issue configuration the channel
+     */
+    void configureBoostrapChannel() throw();
 
 private:
 
@@ -55,10 +62,10 @@ private:
     DataChannel *dataChannel;
 
     //The object to configure and manage the bootstrap channel
-    BootstrapChannel *bootstrapChannel;
+    BleBootstrapChannel *bleBootstrapChannel;
 
-    //TCP Server used to deal with file transfer
-    QTcpServer tcpServer(nullptr_t);
+    //The file transfer server
+    FileTransferServer *fileTransferServer=nullptr;
 
     /**
      * @brief runFileServiceProvider creates and run the venice service
@@ -80,11 +87,7 @@ private:
      */
     void configureDataChannel() throw();
 
-    /**
-     * @brief configureBoostrapAdapter Configures the boostrap channel related to the service
-     * @exception VeniceException if there is an issue configuration the channel
-     */
-    void configureBoostrapChannel() throw();
+
 
 
 };

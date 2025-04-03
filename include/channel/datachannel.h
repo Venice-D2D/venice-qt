@@ -3,7 +3,7 @@
 
 #include "channel.h"
 
-#include <QNetworkInterface>
+#include <QtNetwork/QNetworkInterface>
 
 /**
  * @brief The DataChannel class allows to build data channels by providing the

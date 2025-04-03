@@ -1,4 +1,5 @@
 #include "include/service/filetransferservice.h"
+#include "include/service/filetransferserver.h"
 
 
 #include <QtDebug>
@@ -18,17 +19,18 @@
 
 using namespace std;
 
-FileTransferService::FileTransferService(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, QObject *parent): QThread(parent)
+FileTransferService::FileTransferService(DataChannel *dataChannel, BleBootstrapChannel *bleBoostrapChannel, string filePath, QObject *parent): QThread(parent)
 {
     this->filePath = filePath;
     this->dataChannel = dataChannel;
-    this->bootstrapChannel = boostrapChannel;
+    this->bleBootstrapChannel = bleBoostrapChannel;
 }
 
 FileTransferService::~FileTransferService()
 {
     delete(this->dataChannel);
-    delete(this->bootstrapChannel);
+    delete(this->bleBootstrapChannel);
+    delete(this->fileTransferServer);
 }
 
 void FileTransferService::run()
@@ -60,7 +62,13 @@ void FileTransferService::runFileServiceProvider()
         WifiDataChannel* wifiDataChannel = dynamic_cast<WifiDataChannel*>(this->dataChannel);
 
 
-        FileTransferServer fileTransferServer(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort());
+        if(this->fileTransferServer == nullptr)
+            this->fileTransferServer= new FileTransferServer(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort(), this);
+
+        else if(!this->fileTransferServer->isListening())
+        {
+            this->fileTransferServer->listen();
+        }
 
         qDebug() << "Configuring BLE advertisement...";
 
@@ -200,29 +208,7 @@ void FileTransferService::configureDataChannel() throw()
 
 void FileTransferService::configureBoostrapChannel() throw()
 {
-    this->bootstrapChannel->configure();
-    /*qDebug() << "Selecting a suitable bluetooth adapter devices...";
-    QList<QBluetoothHostInfo> localDevices = QBluetoothLocalDevice::allDevices();
+    this->bleBootstrapChannel->configure();
 
-
-    //We look for the first avaiable and power on adapter
-    //TODO Filter by LE capability
-    for (const QBluetoothHostInfo &device : localDevices) {
-        qDebug() << "Adapter Name:" << device.name();
-        qDebug() << "Adapter Address:" << device.address().toString();
-        QBluetoothLocalDevice localBTDevice(device.address());
-
-        if (localBTDevice.isValid())
-            if (localBTDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff)
-            {
-                // We only use the device if it not turned off and if it is available
-                localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
-                qDebug() << "Selected!";
-                return;
-            }
-
-    }
-
-    throw NotBluetoothAdapterFoundVeniceException();*/
 }
 

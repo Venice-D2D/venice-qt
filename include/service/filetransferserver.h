@@ -14,6 +14,7 @@
 
 #include "include/network/venicemessage.h"
 #include "include/event/venicetimer.h"
+#include "include/service/filetransferservice.h"
 
 using namespace std;
 
@@ -32,21 +33,27 @@ public:
      * @param fileMessages Messages containing the file data
      * @param ipAddress The IP address for sharing the file
      * @param port The port used for listening
+     * @param fileTransferService The file transfer service related to the server
      */
-    FileTransferServer(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port);
+    FileTransferServer(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferService *fileTransferService);
 
     /**
       * @brief ~FileTransferService destructor of the service that closes the TCP server
       */
     ~FileTransferServer();
 
+    /**
+     * @brief listenForConnections Configures the server for listening
+     */
+    void listenForConnections();
+
+    using QTcpServer::listen;
+
 
 private:
-    // The port for listening
-    int port;
 
-    // The file path
-    //const char* filePath;
+    // The port for listening
+    quint16 port;
 
     // The IP address for sharing the file
     QHostAddress ipAddress;
@@ -68,6 +75,9 @@ private:
 
     //Use proto buffer protocol for serialization
     bool useProtobuf;
+
+    //The related File Transfer Service
+    FileTransferService *fileTransferService;
 
 
 

@@ -6,6 +6,15 @@ BleBootstrapChannel::BleBootstrapChannel():BootstrapChannel()
 {
 }
 
+
+BleBootstrapChannel::~BleBootstrapChannel()
+{
+    BootstrapChannel::~BootstrapChannel();
+    if(this->selectedLocalBLEAdapter)
+        delete this->selectedLocalBLEAdapter;
+}
+
+
 void BleBootstrapChannel::configure()
 {
     qDebug() << "Selecting a suitable bluetooth adapter device...";
@@ -26,6 +35,7 @@ void BleBootstrapChannel::configure()
         {
             // We only use the device if it not turned off and if it is available
             localBTDevice.setHostMode(QBluetoothLocalDevice::HostDiscoverable);
+            this->selectedLocalBLEAdapter = new QBluetoothLocalDevice(device.address());
             qDebug() << "Selected!";
             return;
         }
@@ -40,3 +50,9 @@ bool BleBootstrapChannel::checkBleAdapter(QBluetoothLocalDevice &bleDevice)
 {
     return bleDevice.isValid() && bleDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff;
 }
+
+
+QBluetoothLocalDevice* BleBootstrapChannel::getSelectedLocalBLEAdapter(){
+    return this->selectedLocalBLEAdapter;
+}
+

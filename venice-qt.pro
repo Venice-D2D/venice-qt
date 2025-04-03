@@ -15,12 +15,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 LIBS += -lprotobuf
 
 # Input
 HEADERS += \
+    include/consumer/filetransferservicediscoverer.h \
     include/datachannelevents.h \
     include/exception/errorstartingfiletransferserviceveniceexception.h \
     external/protobuf/cpp_proto/venice.pb.h \
@@ -44,6 +45,7 @@ HEADERS += \
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
+    src/consumer/filetransferservicediscoverer.cpp \
     src/tool/networkinformationmanager.cpp \
     src/tool/terminallanguagemanager.cpp \
     src/exception/errorstartingfiletransferserviceveniceexception.cpp \
@@ -64,7 +66,7 @@ SOURCES += src/main.cpp \
     src/channel/bootstrapchannel.cpp \
     src/channel/blebootstrapchannel.cpp
 TRANSLATIONS += venice-qt_en_US.ts
-QT += widgets bluetooth core network
+QT += widgets bluetooth core network gui
 CONFIG += c++23
 QMAKE_CXXFLAGS -= -Wunused-variable
 QMAKE_CXXFLAGS += -Wno-unused-variable

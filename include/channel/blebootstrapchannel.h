@@ -9,6 +9,8 @@
 #include <QBluetoothLocalDevice>
 
 
+static const QString VENICE_DEVICE_NAME = "venice";
+
 class BleBootstrapChannel: public BootstrapChannel
 {
 public:
@@ -17,13 +19,27 @@ public:
      */
     BleBootstrapChannel();
 
+    ~BleBootstrapChannel();
+
     /**
-     * @brief configure
+     * @brief configure Configures the bluetooth adapter
      * @throw NotBluetoothAdapterFoundVeniceException if a valid bluetooth adapter is found
      */
     void configure();
 
+
+    /**
+     * @brief getSelectedLocalBLEAdapter Returns the selected ble adapter
+     * @return The selected local ble adapter
+     */
+    QBluetoothLocalDevice* getSelectedLocalBLEAdapter();
+
 private:
+
+    /**
+     * @brief localBLEDevice The selected bluetooth low energy adapter
+     */
+    QBluetoothLocalDevice *selectedLocalBLEAdapter;
 
     /**
      * @brief checkBleAdapter Verifies that the BLE adapter is valid and UP
