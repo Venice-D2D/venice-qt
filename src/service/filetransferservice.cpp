@@ -130,7 +130,7 @@ void FileTransferService::runFileServiceProvider()
 
         //Service Data
         qDebug() << "Creating service Controller";
-        const unique_ptr<QLowEnergyController> btController(QLowEnergyController::createPeripheral());
+        const unique_ptr<QLowEnergyController> btController(QLowEnergyController::createPeripheral(this->bleBootstrapChannel->getSelectedLocalBLEAdapter()));
 
         //Creating File Service
         qDebug() << "Creating File Service";
