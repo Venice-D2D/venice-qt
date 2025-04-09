@@ -8,7 +8,7 @@ FileTransferServer::FileTransferServer(QObject *parent, QVector<VeniceMessage*> 
     this->port = port;
     this->fileTransferService = fileTransferService;
 
-    this->listen();
+    this->listenForConnections();
 
     qDebug() << "Listening on "<< this->serverAddress() << this->serverPort() << this->serverError();
 
