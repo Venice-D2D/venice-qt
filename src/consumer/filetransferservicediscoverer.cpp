@@ -41,6 +41,7 @@ void FileTransferServiceDiscoverer::processDiscoveredDevice(const QBluetoothDevi
         connect(this->bleDeviceController, &QLowEnergyController::connected, this, &FileTransferServiceDiscoverer::discoverServices);
         connect(this->bleDeviceController, &QLowEnergyController::discoveryFinished, this, &FileTransferServiceDiscoverer::filterDiscoveredServices);
         this->bleDeviceController->connectToDevice();
+        qDebug() << "Connecting to BLE device done !";
     }
     else
         qDebug() << "Ignoring BLE Device...";
