@@ -56,6 +56,7 @@ void FileTransferServer::incomingConnection(qintptr socketDescriptor){
 
         qDebug() << "sending the messages";
         this->sendVeniceMessages();
+        this->clientSocket->disconnectFromHost();
 
     } else {
         qDebug() << "Client connection not accepted...";
