@@ -56,7 +56,8 @@ private:
 
     //Max message size in Venice
     const int MAX_MESSAGE_SIZE = 1000;
-    const string WIFI_DATA_CHANNEL = "wifi_data_channel";
+    //The id for the used data channel
+    const string WIFI_DATA_CHANNEL = "simple_wifi_data_channel";
 
     //The object to configure and manage the data channel
     DataChannel *dataChannel;
