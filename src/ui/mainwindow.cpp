@@ -44,7 +44,7 @@ void MainWindow::on_sendFileButton_clicked()
     {
         DataChannel* dataChannel = new WifiDataChannel();
         BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
-        this->veniceService = new FileTransferServiceProvider(dataChannel, boostrapChannel, filePath.toStdString(), this);
+        this->veniceService = new FileTransferServiceProvider(dataChannel, boostrapChannel, filePath.toStdString(), ui->useProtobufSendRadioButton->isChecked(), this);
 
         //We associated the signal aboutToQuit with a lamba function that stop the service as slot
         this->connect(this->mainApplication, &QApplication::aboutToQuit, veniceService, [this]{
@@ -81,12 +81,16 @@ void MainWindow::on_browseSendFileButton_clicked()
 void MainWindow::on_bleSendRadioButton_clicked()
 {
     if(ui->bleSendRadioButton->isChecked())
+    {
         ui->wifiSendRadioButton->setEnabled(true);
+        ui->useProtobufSendRadioButton->setEnabled(true);
+    }
    else
    {
         ui->wifiSendRadioButton->setEnabled(false);
         ui->wifiSendRadioButton->setChecked(false);
         ui->browseSendFileButton->setEnabled(false);
+        ui->useProtobufSendRadioButton->setEnabled(false);
    }
 
 }
@@ -111,7 +115,7 @@ void MainWindow::on_receiveFileButton_clicked()
         BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
         DataChannel* dataChannel = new WifiDataChannel();
 
-        this->bleDiscoverer= new FileTransferServiceDiscoverer(dataChannel, boostrapChannel);
+        this->bleDiscoverer= new FileTransferServiceDiscoverer(dataChannel, boostrapChannel, ui->useProtobufReceiveRadioButton->isChecked());
 
     }
 
@@ -128,12 +132,16 @@ void MainWindow::on_bleReceiveRadioButton_clicked()
 {
 
     if(ui->bleReceiveRadioButton->isChecked())
+    {
         ui->wifiReceiveRadioButton->setEnabled(true);
+        ui->useProtobufReceiveRadioButton->setEnabled(true);
+    }
     else
     {
         ui->wifiReceiveRadioButton->setEnabled(false);
         ui->wifiReceiveRadioButton->setChecked(false);
         ui->browseReceiveFileButton->setEnabled(false);
+        ui->useProtobufReceiveRadioButton->setEnabled(false);
     }
 }
 

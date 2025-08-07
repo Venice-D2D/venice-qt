@@ -3,11 +3,11 @@
 
 #include <QFile>
 
-FileReceiver::FileReceiver(QObject *parent, ChannelMetadata *channelMetadata, FileMetadata *fileMetadata):QTcpSocket(parent){
+FileReceiver::FileReceiver(QObject *parent, ChannelMetadata *channelMetadata, FileMetadata *fileMetadata, bool useProtobuf):QTcpSocket(parent){
     this->channelMetadata = channelMetadata;
     this->fileMetadata = fileMetadata;
 
-    this->useProtobuf = true;
+    this->useProtobuf = useProtobuf;
 
 
     connect(this, &QTcpSocket::connected, this, &FileReceiver::processConnectionToSender);

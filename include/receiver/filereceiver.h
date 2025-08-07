@@ -15,8 +15,9 @@ public:
      * @param parent The parent of the object
      * @param channelMetadata Metadata related to the data channel
      * @param fileMetadata Metadata related to the file to be received
+     * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
      */
-    FileReceiver(QObject *parent, ChannelMetadata *channelMetadata, FileMetadata *fileMetadata);
+    FileReceiver(QObject *parent, ChannelMetadata *channelMetadata, FileMetadata *fileMetadata, bool useProtobuf);
 
     /**
      * Destructor of the class

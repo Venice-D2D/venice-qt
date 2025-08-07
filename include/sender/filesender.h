@@ -34,8 +34,9 @@ public:
      * @param ipAddress The IP address for sharing the file
      * @param port The port used for listening
      * @param fileTransferService The file transfer service related to the sender
+     * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
      */
-    FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider);
+    FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf);
 
     /**
       * @brief ~FileTransferService destructor of the service that closes the TCP server

@@ -20,7 +20,13 @@
 class FileTransferServiceDiscoverer: public QObject
 {
 public:
-    FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel);
+    /**
+     * @brief FileTransferServiceDiscoverer Constructor of the class
+     * @param dataChannel The Channel used for data transfer
+     * @param bootstrapChannel The bootstrap used for service discovering
+     * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
+     */
+    FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf);
     ~FileTransferServiceDiscoverer();
 
     /**
@@ -86,6 +92,11 @@ private:
      * @brief fileReceiver
      */
     FileReceiver *fileReceiver = nullptr;
+
+    /**
+     * @brief useProtobuf Use protobuf for data serialisation
+     */
+    bool useProtobuf = true;
 
 
 

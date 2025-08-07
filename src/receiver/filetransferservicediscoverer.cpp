@@ -9,10 +9,12 @@
 #include <QProcess>
 #include <QStringList>
 
-FileTransferServiceDiscoverer::FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel) {
+FileTransferServiceDiscoverer::FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf) {
     this->dataChannel = dataChannel;
     this->bootstrapChannel = bootstrapChannel;
     this->foundVeniceFileService = false;
+
+    this->useProtobuf = useProtobuf;
 
     this->dataChannel->configure();
 
@@ -399,7 +401,7 @@ void FileTransferServiceDiscoverer::processReadServiceCharacteristic(const QLowE
 
         if(wifiDataChannel->getSSID()==this->channelMetadata->getNetworkIdentifier() &&     FileTransferServiceProvider::WIFI_DATA_CHANNEL==this->channelMetadata->getChannelIdentifier())
         {
-            this->fileReceiver = new FileReceiver(this, this->channelMetadata, this->fileMetadata);
+            this->fileReceiver = new FileReceiver(this, this->channelMetadata, this->fileMetadata, this->useProtobuf);
             this->fileReceiver->startFileReception();
         }
 

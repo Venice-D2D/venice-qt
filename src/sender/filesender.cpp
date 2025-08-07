@@ -4,11 +4,12 @@
 
 //#include <QProtobufSerializer>
 
-FileSender::FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider): QTcpServer(parent)
+FileSender::FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf): QTcpServer(parent)
 {
     this->ipAddress = ipAddress;
     this->port = port;
     this->fileTransferServiceProvider = fileTransferServiceProvider;
+    this->useProtobuf = useProtobuf;
 
     this->listenForConnections();
 
@@ -19,10 +20,6 @@ FileSender::FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QH
     this->clientSocket = new QTcpSocket(this);
 
     this->resubmissionTimers = {};
-
-    this->useProtobuf = false;
-
-     //QtProtobuf::qRegisterProtobufTypes();
 
 }
 

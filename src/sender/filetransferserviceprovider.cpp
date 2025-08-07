@@ -22,11 +22,12 @@ using namespace std;
 
 const QString FileTransferServiceProvider::WIFI_DATA_CHANNEL = QStringLiteral("simple_wifi_data_channel");
 
-FileTransferServiceProvider::FileTransferServiceProvider(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, QObject *parent): QThread(parent)
+FileTransferServiceProvider::FileTransferServiceProvider(DataChannel *dataChannel, BootstrapChannel *boostrapChannel, string filePath, bool useProtobuf, QObject *parent): QThread(parent)
 {
     this->filePath = filePath;
     this->dataChannel = dataChannel;
     this->bootstrapChannel = boostrapChannel;
+    this->useProtobuf = useProtobuf;
 }
 
 FileTransferServiceProvider::~FileTransferServiceProvider()
@@ -72,7 +73,7 @@ void FileTransferServiceProvider::runFileServiceProvider()
 
 
         if(this->fileSender == nullptr)
-            this->fileSender= new FileSender(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort(), this);
+            this->fileSender= new FileSender(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort(), this, this->useProtobuf);
 
         else if(!this->fileSender->isListening())
         {

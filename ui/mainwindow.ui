@@ -195,6 +195,30 @@
        </rect>
       </property>
      </widget>
+     <widget class="QRadioButton" name="useProtobufReceiveRadioButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>140</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Use Protobuf</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="sendTab">
      <attribute name="title">
@@ -328,6 +352,30 @@
        <string>Send</string>
       </property>
       <property name="default">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="useProtobufSendRadioButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>140</y>
+        <width>100</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Use Protobuf</string>
+      </property>
+      <property name="checked">
        <bool>true</bool>
       </property>
      </widget>

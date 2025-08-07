@@ -30,9 +30,10 @@ public:
      * @param dataChannel The channel to data transfer
      * @param BoostrapChannel The channel to expose the file service transfer
      * @param filePath The path of the file to be transfered
+     * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
      * @param parent of the thread. It is a MainWindow instance
      */
-    FileTransferServiceProvider(DataChannel *dataChannel, BootstrapChannel *bleBoostrapChannel, string filePath, QObject *parent = nullptr);
+    FileTransferServiceProvider(DataChannel *dataChannel, BootstrapChannel *bleBoostrapChannel, string filePath, bool useProtobuf, QObject *parent = nullptr);
 
     /**
       * @brief VeniceServiceThread destructor
@@ -89,6 +90,11 @@ private:
      * @brief fileSender The file sender
      */
     FileSender *fileSender=nullptr;
+
+    /**
+     * @brief useProtobuf Use protobuf for data serialisation
+     */
+    bool useProtobuf;
 
     /**
      * @brief runFileServiceProvider creates and run the venice service
