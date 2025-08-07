@@ -10,5 +10,4 @@ DataChannel::DataChannel(QNetworkInterface::InterfaceType networkInterfaceType)
 
 DataChannel::~DataChannel()
 {
-
 }

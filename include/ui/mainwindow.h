@@ -11,7 +11,8 @@
 #include <QLowEnergyDescriptorData>
 #include <QtCore/qtimer.h>
 
-#include "include/service/filetransferservice.h"
+#include "include/sender/filetransferserviceprovider.h"
+#include "include/receiver/filetransferservicediscoverer.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -104,10 +105,12 @@ private:
     Ui::MainWindow *ui;
 
     //The venice service thread
-    FileTransferService *veniceService= nullptr;
+    FileTransferServiceProvider *veniceService= nullptr;
 
     //The main application
     QApplication *mainApplication= nullptr;
+
+    FileTransferServiceDiscoverer *bleDiscoverer=nullptr;
 
 };
 #endif // MAINWINDOW_H

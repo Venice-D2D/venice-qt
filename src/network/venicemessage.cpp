@@ -1,10 +1,35 @@
 #include "include/network/venicemessage.h"
+//#include <QtProtobuf/QProtobufSerializer>
+//#include <QtProtobuf/QAbstractProtobufSerializer>
 
 VeniceMessage::VeniceMessage(int messageId, bool ack, vector<byte> data)
 {
     this->ack = ack;
     this->messageId = messageId;
     this->data = data;
+}
+
+VeniceMessage::VeniceMessage()
+{
+    this->ack = false;
+    this->messageId = -1;
+    this->data = vector<byte>();
+}
+
+
+VeniceMessage::VeniceMessage(VeniceMessageProto messageProto)
+{
+    this->ack = messageProto.ack();
+    this->messageId = messageProto.messageid();
+    string messageData = messageProto.data();
+
+
+    this->data = vector<byte>();
+    this->data.reserve(messageData.size());
+
+    for (char currentChar : messageData) {
+        this->data.push_back(static_cast<std::byte>(currentChar));
+    }
 }
 
 VeniceMessage::~VeniceMessage()
@@ -51,12 +76,16 @@ bool VeniceMessage::isAck(){
     return this->ack;
 }
 
+vector<byte> VeniceMessage::getData(){
+    return this->data;
+}
+
 QByteArray VeniceMessage::toProtoBuf(){
 
     VeniceMessageProto protoMessage;
 
 
-    qDebug() << "Adding data to protobuf message...";
+    qDebug() << "[VeniceMessage] Adding data to protobuf message...";
 
     protoMessage.set_data(reinterpret_cast<const char*>(this->data.data()), this->data.size());
 
@@ -67,11 +96,36 @@ QByteArray VeniceMessage::toProtoBuf(){
     std::string serializedMessage;
     if (!protoMessage.SerializeToString(&serializedMessage)) {
 
-        qDebug() << "Failed to serialize Protobuf object.";
+        qDebug() << "[VeniceMessage] Failed to serialize Protobuf object.";
         return QByteArray();
     }
 
     // Send the serialized data
     return QByteArray(serializedMessage.c_str(), serializedMessage.size());
+}
 
+VeniceMessage VeniceMessage::fromProtoBuf(const QByteArray &protoBufMessageData)
+{
+    VeniceMessageProto protoMessage;
+
+    //QProtobufSerializer serializer;
+
+    //serializer.deserialize(&protoMessage, protoBufMessageData);
+
+    std::string serializedMessage(protoBufMessageData.constData(), protoBufMessageData.size());
+
+    if(!(protoMessage.ParseFromString(serializedMessage))){//ParseFromArray(protoBufMessageData.constData(), protoBufMessageData.size()))){
+        qWarning() << "[VeniceMessage] Failed to parse protobuf data";
+
+        QByteArray hexDump = protoBufMessageData.toHex(' ');
+        qDebug() << "[VeniceMessage] Raw bytes (hex):" << hexDump;
+
+        return VeniceMessage();
+    }
+
+    /*if (serializer.lastError() != QAbstractProtobufSerializer::Error::None) {
+        qWarning() << "[VeniceMessage] Error:" << serializer.lastErrorString();
+    }*/
+
+    return VeniceMessage(protoMessage);
 }

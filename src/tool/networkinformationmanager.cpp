@@ -55,29 +55,7 @@ QString NetworkInformationManager::getNetworkInterfaceNameByType(QNetworkInterfa
     return interfaceName;
 }
 
-QNetworkInterface NetworkInformationManager::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType)
-{
-    QNetworkInterface networkInterface;
 
-    QList<QNetworkInterface> currentInterfaces = QNetworkInterface::allInterfaces();
-
-
-    for(QNetworkInterface currentInterface: currentInterfaces)
-    {
-        if(currentInterface.type()== networkInterfaceType && currentInterface.flags().testFlag(QNetworkInterface::IsUp) && currentInterface.flags().testFlag(QNetworkInterface::IsRunning) && currentInterface.flags().testFlag(QNetworkInterface::IsRunning) && !currentInterface.flags().testFlag(QNetworkInterface::IsLoopBack))
-        {
-            networkInterface = currentInterface;
-
-            qDebug() << "Selected Network interface Name " << networkInterface.name();
-            qDebug() << "Adresses " << networkInterface.allAddresses().size();
-            qDebug() << "Adresses Entries " << networkInterface.addressEntries().size();
-
-            return networkInterface;
-        }
-    }
-
-    throw NotSuitableWifiAdapterFoundVeniceException();
-}
 
 
 
@@ -116,4 +94,28 @@ const char* NetworkInformationManager::networkInterfaceTypeToString(QNetworkInte
         return UNKNOWN;
     }
 
+}
+
+QNetworkInterface NetworkInformationManager::searchActiveNetworkInterfaceByType(QNetworkInterface::InterfaceType networkInterfaceType)
+{
+    QNetworkInterface networkInterface;
+
+    QList<QNetworkInterface> currentInterfaces = QNetworkInterface::allInterfaces();
+
+
+    for(QNetworkInterface currentInterface: currentInterfaces)
+    {
+        if(currentInterface.type()== networkInterfaceType && currentInterface.flags().testFlag(QNetworkInterface::IsUp) && currentInterface.flags().testFlag(QNetworkInterface::IsRunning) && !currentInterface.flags().testFlag(QNetworkInterface::IsLoopBack))
+        {
+            networkInterface = currentInterface;
+
+            qDebug() << "Selected Network interface Name " << networkInterface.name();
+            qDebug() << "Adresses " << networkInterface.allAddresses().size();
+            qDebug() << "Adresses Entries " << networkInterface.addressEntries().size();
+
+            return networkInterface;
+        }
+    }
+
+    throw NotSuitableWifiAdapterFoundVeniceException();
 }

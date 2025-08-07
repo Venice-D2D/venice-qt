@@ -3,7 +3,7 @@
 #include "include/channel/datachannel.h"
 #include "include/channel/wifidatachannel.h"
 #include "include/channel/blebootstrapchannel.h"
-#include "include/consumer/filetransferservicediscoverer.h"
+#include "include/receiver/filetransferservicediscoverer.h"
 
 #include <memory>
 #include <QFileDialog>
@@ -24,9 +24,10 @@ MainWindow::~MainWindow()
     delete ui;
 
     if(veniceService != nullptr)
-    {
         delete veniceService;
-    }
+
+    if(this->bleDiscoverer!=nullptr)
+        delete this->bleDiscoverer;
 }
 
 void MainWindow::setMainApplication(QApplication *application)
@@ -43,7 +44,7 @@ void MainWindow::on_sendFileButton_clicked()
     {
         DataChannel* dataChannel = new WifiDataChannel();
         BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
-        this->veniceService = new FileTransferService(dataChannel, boostrapChannel, filePath.toStdString(), this);
+        this->veniceService = new FileTransferServiceProvider(dataChannel, boostrapChannel, filePath.toStdString(), this);
 
         //We associated the signal aboutToQuit with a lamba function that stop the service as slot
         this->connect(this->mainApplication, &QApplication::aboutToQuit, veniceService, [this]{
@@ -102,15 +103,24 @@ void MainWindow::on_wifiSendRadioButton_clicked()
 
 void MainWindow::on_receiveFileButton_clicked()
 {
-    BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
-
-    FileTransferServiceDiscoverer bleDiscover(boostrapChannel);
-
 
     QString directoryPath= ui->selectedReceiveFileLineEdit->text();
 
+    if(this->bleDiscoverer==nullptr)
+    {
+        BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
+        DataChannel* dataChannel = new WifiDataChannel();
+
+        this->bleDiscoverer= new FileTransferServiceDiscoverer(dataChannel, boostrapChannel);
+
+    }
+
+
     if(!directoryPath.isEmpty())
-        bleDiscover.runDiscoverer();
+    {
+        this->bleDiscoverer->setDirectoryPath(directoryPath);
+        bleDiscoverer->runDiscoverer();
+    }
 
 }
 

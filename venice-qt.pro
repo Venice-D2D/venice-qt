@@ -21,17 +21,20 @@ LIBS += -lprotobuf
 
 # Input
 HEADERS += \
-    include/consumer/filetransferservicediscoverer.h \
+    include/metadata/channelmetadata.h \
+    include/metadata/filemetadata.h \
+    include/receiver/filereceiver.h \
+    include/receiver/filetransferservicediscoverer.h \
     include/datachannelevents.h \
     include/exception/errorstartingfiletransferserviceveniceexception.h \
     external/protobuf/cpp_proto/venice.pb.h \
-    include/service/filetransferserver.h \
-    include/service/filetransferservice.h \
+    include/sender/filesender.h \
+    include/sender/filetransferserviceprovider.h \
     include/ui/mainwindow.h \
     include/exception/notavailableportfoundveniceexception.h \
     include/exception/notbluetoothadapterfoundveniceexception.h \
     include/exception/notsuitablewifiadapterfoundveniceexception.h \
-    include/service/venicebluetoothuuid.h \
+    include/sender/venicebluetoothuuid.h \
     include/exception/veniceexception.h \
     include/network/venicemessage.h \
     include/event/venicetimer.h \
@@ -45,18 +48,21 @@ HEADERS += \
 FORMS += \
     ui/mainwindow.ui
 SOURCES += src/main.cpp \
-    src/consumer/filetransferservicediscoverer.cpp \
+    src/metadata/channelmetadata.cpp \
+    src/metadata/filemetadata.cpp \
+    src/receiver/filereceiver.cpp \
+    src/receiver/filetransferservicediscoverer.cpp \
+    src/sender/filesender.cpp \
+    src/sender/filetransferserviceprovider.cpp \
     src/tool/networkinformationmanager.cpp \
     src/tool/terminallanguagemanager.cpp \
     src/exception/errorstartingfiletransferserviceveniceexception.cpp \
     external/protobuf/cpp_proto/venice.pb.cc \
-    src/service/filetransferserver.cpp \
-    src/service/filetransferservice.cpp \
     src/ui/mainwindow.cpp \
     src/exception/notavailableportfoundveniceexception.cpp \
     src/exception/notbluetoothadapterfoundveniceexception.cpp \
     src/exception/notsuitablewifiadapterfoundveniceexception.cpp \
-    src/service/venicebluetoothuuid.cpp \
+    src/sender/venicebluetoothuuid.cpp \
     src/exception/veniceexception.cpp \
     src/network/venicemessage.cpp \
     src/event/venicetimer.cpp \

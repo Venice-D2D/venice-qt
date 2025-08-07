@@ -22,12 +22,24 @@ class VeniceMessage
 {
 public:
     /**
-     * @brief VeniceMessage constructor
+     * @brief VeniceMessage Constructor with paramaters
      * @param messageId The message identifier
-     * @param ack The acknolegement related to the message
+     * @param ack The acknowlegement related to the message
      * @param data The data contained by the message
      */
     VeniceMessage(int messageId, bool ack, vector<byte> data);
+
+    /**
+     * @brief VeniceMessage Constructor by using a proto message
+     * @param messageProto The proto message
+     */
+    VeniceMessage(VeniceMessageProto messageProto);
+
+
+    /**
+     * @brief VeniceMessage Default constructor
+     */
+    VeniceMessage();
 
     /**
       * @brief VeniceMessage destructor
@@ -65,13 +77,26 @@ public:
      */
     int getMessageId();
 
+    /**
+     * @brief getData Returns the data related to the message
+     * @return the data related to the message
+     */
+    vector<byte> getData();
+
 
     /**
-     * @brief VeniceMessage::fromJson Deserielization of of the message
-     * @param jsonMessageData The ocject represention in json
+     * @brief fromJson Deserielization of of the message
+     * @param jsonMessageData The object represention in json
      * @return The message represented by the json document
      */
     static VeniceMessage fromJson(const QByteArray &jsonMessageData);
+
+    /**
+     * @brief fromProtoBuf Deserielization of of the message
+     * @param protoBufMessageData The object represention in protobuf
+     * @return The message represented by the protobuf
+     */
+    static VeniceMessage fromProtoBuf(const QByteArray &protoBufMessageData);
 
 private:
 

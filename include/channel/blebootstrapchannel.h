@@ -9,7 +9,7 @@
 #include <QBluetoothLocalDevice>
 
 
-static const QString VENICE_DEVICE_NAME = "venice";
+static const QString VENICE_DEVICE_NAME = "venice";//"venice-xxxxx";
 
 class BleBootstrapChannel: public BootstrapChannel
 {

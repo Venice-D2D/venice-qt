@@ -4,6 +4,7 @@
 
 #include <QTcpServer>
 #include <QProcess>
+#include <QRegularExpression>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ WifiDataChannel::~WifiDataChannel()
 
 void WifiDataChannel::configure() throw()
 {
-    this->wifiInterface = NetworkInformationManager::searchNetworkInterfaceByType(QNetworkInterface::InterfaceType::Wifi);
+    this->wifiInterface = NetworkInformationManager::searchActiveNetworkInterfaceByType(QNetworkInterface::InterfaceType::Wifi);
     this->networkInterfaceName = this->wifiInterface.name();
     qDebug() << "Wifi Adapter set!";
 
@@ -122,5 +123,8 @@ void WifiDataChannel::searchForSSID()
 
     if(this->ssid.isNull() || this->ssid.isEmpty())
         throw NotSuitableWifiAdapterFoundVeniceException();
+
+    this->ssid.remove(QRegularExpression("[\\r\\n]"));
+
 
 }

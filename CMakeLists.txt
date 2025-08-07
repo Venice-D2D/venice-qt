@@ -30,13 +30,13 @@ set(SOURCES
     src/channel/datachannel.cpp
     src/exception/errorstartingfiletransferserviceveniceexception.cpp
     external/protobuf/cpp_proto/venice.pb.cc
-    src/service/filetransferservice.cpp
-    src/service/filetransferserver.cpp
+    src/sender/filetransferserviceprovider.cpp
+    src/sender/filesender.cpp
     src/ui/mainwindow.cpp
     src/exception/notavailableportfoundveniceexception.cpp
     src/exception/notbluetoothadapterfoundveniceexception.cpp
     src/exception/notsuitablewifiadapterfoundveniceexception.cpp
-    src/service/venicebluetoothuuid.cpp
+    src/sender/venicebluetoothuuid.cpp
     src/exception/veniceexception.cpp
     src/network/venicemessage.cpp
     src/event/venicetimer.cpp
@@ -45,12 +45,15 @@ set(SOURCES
     src/channel/bootstrapchannel.cpp
     src/tool/terminallanguagemanager.cpp
     src/tool/networkinformationmanager.cpp
-    src/consumer/filetransferservicediscoverer.cpp
+    src/receiver/filetransferservicediscoverer.cpp
+    src/receiver/filereceiver.cpp
+    src/metadata/channelmetadata.cpp
+    src/metadata/filemetadata.cpp
 )
 
 set(HEADERS
     include/ui/mainwindow.h
-    include/service/filetransferservice.h
+    include/sender/filetransferserviceprovider.h
 )
 
 qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
@@ -78,5 +81,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Bluetooth
     Qt6::Core
     Qt6::Network
+    # QT6::Protobuf
     ${Protobuf_LIBRARIES}
 )
