@@ -16,7 +16,6 @@ WifiDataChannel::WifiDataChannel():DataChannel(QNetworkInterface::InterfaceType:
 
 WifiDataChannel::~WifiDataChannel()
 {
-    //system("service NetworkManager start");
 }
 
 void WifiDataChannel::configure() throw()

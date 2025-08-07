@@ -115,10 +115,6 @@ private:
      * @exception VeniceException if there is an issue configuration the channel
      */
     void configureDataChannel() throw();
-
-
-
-
 };
 
 #endif // FILETRANSFERSERVICEPROVIDER_H

@@ -33,13 +33,10 @@ void FileReceiver::startFileReception(){
 void FileReceiver::processConnectionToSender()
 {
     qDebug() << "[FileReceiver] Connected to server.";
-    // Optionally send something: socket->write("Hello Server");
 }
 
 void FileReceiver::processMessageReceived()
 {
-    //QByteArray data = this->readAll();
-
     if(this->currentDatalength==-1)
     {
         if (this->bytesAvailable() < 4)
@@ -51,8 +48,6 @@ void FileReceiver::processMessageReceived()
                      (unsigned char)lenghtBytes[2] << 8 |
                      (unsigned char)lenghtBytes[3];
     }
-
-
 
     qDebug() << "[FileReceiver] data length:" << this->currentDatalength;
 
@@ -105,7 +100,7 @@ void FileReceiver::processMessageReceived()
             this->disconnectFromHost();
 
         }
-            //Raise an event to the GUI show a message
+        //TODO Raise an event to GUI for showing a message
     }
 
 

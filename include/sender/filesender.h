@@ -15,6 +15,7 @@
 #include "include/network/venicemessage.h"
 #include "include/event/venicetimer.h"
 #include "include/sender/filetransferserviceprovider.h"
+#include "include/metadata/channelmetadata.h"
 
 using namespace std;
 
@@ -31,12 +32,11 @@ public:
      * @brief FileSender constructor of the TCP Server for sending files
      * @param parent of the server
      * @param fileMessages Messages containing the file data
-     * @param ipAddress The IP address for sharing the file
-     * @param port The port used for listening
+     * @param channelMetadata The IP address and port for sharing the file
      * @param fileTransferService The file transfer service related to the sender
      * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
      */
-    FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf);
+    FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, ChannelMetadata *channelMetadata, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf);
 
     /**
       * @brief ~FileTransferService destructor of the service that closes the TCP server
@@ -54,14 +54,9 @@ public:
 private:
 
     /**
-     * @brief port The port for listening
+     * @brief channelMetadata The information related to the data channel
      */
-    quint16 port;
-
-    /**
-     * @brief ipAddress The IP address for sharing the file
-     */
-    QHostAddress ipAddress;
+    ChannelMetadata *channelMetadata;
 
 
     /**

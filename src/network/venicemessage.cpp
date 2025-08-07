@@ -1,6 +1,4 @@
 #include "include/network/venicemessage.h"
-//#include <QtProtobuf/QProtobufSerializer>
-//#include <QtProtobuf/QAbstractProtobufSerializer>
 
 VeniceMessage::VeniceMessage(int messageId, bool ack, vector<byte> data)
 {
@@ -108,10 +106,6 @@ VeniceMessage VeniceMessage::fromProtoBuf(const QByteArray &protoBufMessageData)
 {
     VeniceMessageProto protoMessage;
 
-    //QProtobufSerializer serializer;
-
-    //serializer.deserialize(&protoMessage, protoBufMessageData);
-
     std::string serializedMessage(protoBufMessageData.constData(), protoBufMessageData.size());
 
     if(!(protoMessage.ParseFromString(serializedMessage))){//ParseFromArray(protoBufMessageData.constData(), protoBufMessageData.size()))){
@@ -122,10 +116,6 @@ VeniceMessage VeniceMessage::fromProtoBuf(const QByteArray &protoBufMessageData)
 
         return VeniceMessage();
     }
-
-    /*if (serializer.lastError() != QAbstractProtobufSerializer::Error::None) {
-        qWarning() << "[VeniceMessage] Error:" << serializer.lastErrorString();
-    }*/
 
     return VeniceMessage(protoMessage);
 }

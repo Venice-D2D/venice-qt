@@ -2,12 +2,9 @@
 #include "include/exception/errorstartingfiletransferserviceveniceexception.h"
 #include "external/protobuf/cpp_proto/venice.pb.h"
 
-//#include <QProtobufSerializer>
-
-FileSender::FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, QHostAddress ipAddress, quint16 port, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf): QTcpServer(parent)
+FileSender::FileSender(QObject *parent, QVector<VeniceMessage*> fileMessages, ChannelMetadata *channelMetadata, FileTransferServiceProvider *fileTransferServiceProvider, bool useProtobuf): QTcpServer(parent)
 {
-    this->ipAddress = ipAddress;
-    this->port = port;
+    this->channelMetadata = channelMetadata;
     this->fileTransferServiceProvider = fileTransferServiceProvider;
     this->useProtobuf = useProtobuf;
 
@@ -46,14 +43,6 @@ void FileSender::incomingConnection(qintptr socketDescriptor){
         connect(this->clientSocket, &QTcpSocket::disconnected, clientSocket, &QTcpSocket::deleteLater);
 
         qDebug() << "[FileSender] New connection established!";
-
-        //qDebug() << "Re-start the file transfer service";
-        //qDebug() << "Quit";
-        //this->fileTransferService->quit();
-        //qDebug() << "Wait";
-        //this->fileTransferService->wait();
-        //qDebug() << "Start";
-        //this->fileTransferService->start();
 
         qDebug() << "[FileSender] sending the messages";
         this->sendVeniceMessages();
@@ -260,7 +249,9 @@ VeniceTimer* FileSender::sendVeniceMessage(VeniceMessage* message){
 
 void FileSender::listenForConnections()
 {
-    if(!this->listen(this->ipAddress, this->port))
+    QHostAddress ipAddress(this->channelMetadata->getAddress());
+
+    if(!this->listen(ipAddress, this->channelMetadata->getPort()))
     {
         qDebug() << "[FileSender] Issues configuring FileTransferService";
         throw ErrorStartingFileTransferServiceVeniceException();

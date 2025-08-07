@@ -70,10 +70,11 @@ void FileTransferServiceProvider::runFileServiceProvider()
         QVector<VeniceMessage*> fileMessages = this->readFileData(filePath, msgMaxSize);
 
         WifiDataChannel* wifiDataChannel = dynamic_cast<WifiDataChannel*>(this->dataChannel);
-
+        if(this->channelMetadata == nullptr)
+            this->channelMetadata = new ChannelMetadata(WIFI_DATA_CHANNEL, wifiDataChannel->getNetworkAddress().ip().toString(), wifiDataChannel->getSSID(), "", wifiDataChannel->getPort());
 
         if(this->fileSender == nullptr)
-            this->fileSender= new FileSender(nullptr, fileMessages, wifiDataChannel->getNetworkAddress().ip(), wifiDataChannel->getPort(), this, this->useProtobuf);
+            this->fileSender= new FileSender(nullptr, fileMessages, this->channelMetadata, this, this->useProtobuf);
 
         else if(!this->fileSender->isListening())
         {
@@ -110,10 +111,8 @@ void FileTransferServiceProvider::runFileServiceProvider()
         QLowEnergyCharacteristicData channelChacteristic;
         channelChacteristic.setUuid(VeniceBluetoothUuid::getWifiChannelCharacteristicType());
         channelChacteristic.setProperties(QLowEnergyCharacteristic::PropertyType::Read);
-        //TODO Update according the code for enabling exchange via wifi
-        this->channelMetadata = new ChannelMetadata(WIFI_DATA_CHANNEL, wifiDataChannel->getNetworkAddress().ip().toString(), wifiDataChannel->getSSID(), "", wifiDataChannel->getPort());
-        //string channelCharacteristicValue = WIFI_DATA_CHANNEL+";"+wifiDataChannel->getNetworkAddress().ip().toString().toStdString()+";"+wifiDataChannel->getSSID().toStdString()      +";"+std::to_string(wifiDataChannel->getPort()); // chanel identifier, address, ssid (Ap identifier), key/port
-        string channelCharacteristicValue = channelMetadata->toString().toStdString();
+
+        string channelCharacteristicValue = this->channelMetadata->toString().toStdString();
         channelChacteristic.setValue(QByteArray(channelCharacteristicValue.c_str()));
         QLowEnergyDescriptorData clientConfigChannelCharacteristicDescriptor(QBluetoothUuid::DescriptorType::CharacteristicUserDescription,
                                                     QByteArray(channelCharacteristicValue.c_str()));
