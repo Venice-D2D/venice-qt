@@ -92,9 +92,22 @@ private:
 
 
 private slots:
-    void onBytesWritten(qint64 bytes);
-    void onError(QAbstractSocket::SocketError socketError);
-    void onDataReadyToBeRead();
+
+    /**
+     * @brief dealWithMessageSent Sends next message to the consumer
+     * @param bytes N/A
+     */
+    void dealWithMessageSent(qint64 bytes);
+    /**
+     * @brief dealWithError Show the errors related to the file sending
+     * @param socketError Error related to the tcp socket used for sending the file
+     */
+    void dealWithError(QAbstractSocket::SocketError socketError);
+
+    /**
+     * @brief processMessageReceived Deal with ackwnoledge messages
+     */
+    void processMessageReceived();
 
 protected:
 

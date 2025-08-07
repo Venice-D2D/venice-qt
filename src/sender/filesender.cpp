@@ -35,9 +35,9 @@ void FileSender::incomingConnection(qintptr socketDescriptor){
         qDebug() << "[FileSender] Usage of adress "<< this->clientSocket->localAddress();
 
         connect(this->clientSocket, &QTcpSocket::errorOccurred,
-                    this, &FileSender::onError);
+                    this, &FileSender::dealWithError);
 
-        if(connect(this->clientSocket, &QTcpSocket::readyRead, this, &FileSender::onDataReadyToBeRead))
+        if(connect(this->clientSocket, &QTcpSocket::readyRead, this, &FileSender::processMessageReceived))
             qDebug() << "[FileSender] onDataReadyToBeRead connected!!";
 
         connect(this->clientSocket, &QTcpSocket::disconnected, clientSocket, &QTcpSocket::deleteLater);
@@ -54,15 +54,15 @@ void FileSender::incomingConnection(qintptr socketDescriptor){
     }
 }
 
-void FileSender::onBytesWritten(__attribute__((unused))qint64 bytes) {
+void FileSender::dealWithMessageSent(__attribute__((unused))qint64 bytes) {
     this->sendNextVeniceMessage();
 }
 
-void FileSender::onError(QAbstractSocket::SocketError socketError) {
+void FileSender::dealWithError(QAbstractSocket::SocketError socketError) {
     qCritical() << "[FileSender] Socket error:" << socketError;
 }
 
-void FileSender::onDataReadyToBeRead(){
+void FileSender::processMessageReceived(){
 
     if (this->clientSocket->state() == QTcpSocket::ConnectedState) {
         qDebug() << "[FileSender] Socket is connected.";
