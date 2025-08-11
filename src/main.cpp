@@ -1,5 +1,5 @@
 #include "include/ui/mainwindow.h"
-#include "include/sender/filetransferserviceprovider.h"
+//#include "include/sender/filetransferserviceprovider.h"
 
 #include <memory>
 #include <QApplication>

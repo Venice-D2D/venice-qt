@@ -44,9 +44,12 @@ HEADERS += \
     include/channel/datachannel.h \
     include/channel/wifidatachannel.h \
     include/tool/terminallanguagemanager.h \
-    include/tool/networkinformationmanager.h
+    include/tool/networkinformationmanager.h \
+    include/ui/venicedevicesdialog.h \
+    include/ui/venicedeviceslistmodel.h
 FORMS += \
-    ui/mainwindow.ui
+    ui/mainwindow.ui \
+    ui/venicedevicesdialog.ui
 SOURCES += src/main.cpp \
     src/metadata/channelmetadata.cpp \
     src/metadata/filemetadata.cpp \
@@ -70,7 +73,9 @@ SOURCES += src/main.cpp \
     src/channel/datachannel.cpp \
     src/channel/wifidatachannel.cpp \
     src/channel/bootstrapchannel.cpp \
-    src/channel/blebootstrapchannel.cpp
+    src/channel/blebootstrapchannel.cpp \
+    src/ui/venicedeviceslistmodel.cpp \
+    src/ui/venicedevicesdialog.cpp
 TRANSLATIONS += venice-qt_en_US.ts
 QT += widgets bluetooth core network gui
 CONFIG += c++23

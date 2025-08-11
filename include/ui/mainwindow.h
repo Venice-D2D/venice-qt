@@ -13,11 +13,14 @@
 
 #include "include/sender/filetransferserviceprovider.h"
 #include "include/receiver/filetransferservicediscoverer.h"
+//#include "include/ui/venicedevicesdialog.h"
 
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class VeniceDevicesDialog;
 
 /**
  * @brief The MainWindow class is the entry point for the final user UI
@@ -44,6 +47,12 @@ public:
      */
 
     void setMainApplication(QApplication *application);
+
+    /**
+     * @brief useSelectedDeviceForRetrieval Start the reception of the file by using the current device
+     * @param device The ble device to be used for getting the file
+     */
+    void useSelectedDeviceForRetrieval(QBluetoothDeviceInfo *device);
 
 
 private slots:
@@ -101,16 +110,30 @@ private slots:
 
 
 private:
-    //The main window
+    /**
+     * @brief ui The main window
+     */
     Ui::MainWindow *ui;
 
-    //The venice service thread
-    FileTransferServiceProvider *veniceService= nullptr;
+    /**
+     * @brief veniceService The venice service thread
+     */
+    FileTransferServiceProvider *veniceService = nullptr;
 
-    //The main application
-    QApplication *mainApplication= nullptr;
+    /**
+     * @brief mainApplication The main application
+     */
+    QApplication *mainApplication = nullptr;
 
-    FileTransferServiceDiscoverer *bleDiscoverer=nullptr;
+    /**
+     * @brief bleDiscoverer The venice service discover
+     */
+    FileTransferServiceDiscoverer *bleDiscoverer = nullptr;
+
+    /**
+     * @brief venideDevicesDialog The dialog containing the found venice devices
+     */
+    VeniceDevicesDialog *veniceDevicesDialog = nullptr;
 
 };
 #endif // MAINWINDOW_H

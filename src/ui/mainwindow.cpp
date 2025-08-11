@@ -4,12 +4,13 @@
 #include "include/channel/wifidatachannel.h"
 #include "include/channel/blebootstrapchannel.h"
 #include "include/receiver/filetransferservicediscoverer.h"
+#include "include/ui/venicedeviceslistmodel.h"
+#include "include/ui/venicedevicesdialog.h"
 
 #include <memory>
 #include <QFileDialog>
 #include <iostream>
 #include <QtCore/qtimer.h>
-
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -19,15 +20,17 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
 
-    if(veniceService != nullptr)
+    if(veniceService!=nullptr)
         delete veniceService;
 
     if(this->bleDiscoverer!=nullptr)
         delete this->bleDiscoverer;
+
+    if(this->veniceDevicesDialog!=nullptr)
+        delete this->veniceDevicesDialog;
 }
 
 void MainWindow::setMainApplication(QApplication *application)
@@ -119,6 +122,10 @@ void MainWindow::on_receiveFileButton_clicked()
 
     }
 
+    if(this->veniceDevicesDialog==nullptr)
+    {
+        this->veniceDevicesDialog = new VeniceDevicesDialog(this);
+    }
 
     if(!directoryPath.isEmpty())
     {
@@ -165,5 +172,10 @@ void MainWindow::on_browseReceiveFileButton_clicked()
         ui->selectedReceiveFileLineEdit->setText(directoryName);
         ui->receiveFileButton->setEnabled(true);
     }
+
+}
+
+void MainWindow::useSelectedDeviceForRetrieval(QBluetoothDeviceInfo *device)
+{
 
 }

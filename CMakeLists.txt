@@ -32,7 +32,6 @@ set(SOURCES
     external/protobuf/cpp_proto/venice.pb.cc
     src/sender/filetransferserviceprovider.cpp
     src/sender/filesender.cpp
-    src/ui/mainwindow.cpp
     src/exception/notavailableportfoundveniceexception.cpp
     src/exception/notbluetoothadapterfoundveniceexception.cpp
     src/exception/notsuitablewifiadapterfoundveniceexception.cpp
@@ -49,16 +48,21 @@ set(SOURCES
     src/receiver/filereceiver.cpp
     src/metadata/channelmetadata.cpp
     src/metadata/filemetadata.cpp
+    src/ui/venicedeviceslistmodel.cpp
+    src/ui/mainwindow.cpp
+    src/ui/venicedevicesdialog.cpp
 )
 
 set(HEADERS
+    include/ui/venicedeviceslistmodel.h
+    include/ui/venicedevicesdialog.h
     include/ui/mainwindow.h
     include/sender/filetransferserviceprovider.h
 )
 
 qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
-# Generate H files for UI file by indicating their path
+# Generate H files for UI files by indicating their path
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 
 
