@@ -9,7 +9,7 @@
 #include <QProcess>
 #include <QStringList>
 
-FileTransferServiceDiscoverer::FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf) {
+FileTransferServiceDiscoverer::FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf, VeniceDevicesListModel* veniceDevicesList) {
     this->dataChannel = dataChannel;
     this->bootstrapChannel = bootstrapChannel;
     this->foundVeniceFileService = false;
@@ -18,14 +18,18 @@ FileTransferServiceDiscoverer::FileTransferServiceDiscoverer(DataChannel *dataCh
 
     this->dataChannel->configure();
 
+    this->veniceDevicesList = veniceDevicesList;
+
 }
 
 FileTransferServiceDiscoverer::~FileTransferServiceDiscoverer() {
 
+    qDebug() << "[FileTransferServiceDiscoverer] Deleting bleDeviceDiscoverer";
     delete this->bleDeviceDiscoverer;
+    qDebug() << "[FileTransferServiceDiscoverer] Deleting bootstrapChannel";
     delete this->bootstrapChannel;
+    qDebug() << "[FileTransferServiceDiscoverer] Deleting dataChannel";
     delete this->dataChannel;
-    delete this->bootstrapChannel;
 
     if(this->fileReceiver !=nullptr)
         delete this->fileReceiver;
@@ -36,6 +40,8 @@ void FileTransferServiceDiscoverer::setDirectoryPath(QString directoryPath){
 }
 
 void FileTransferServiceDiscoverer::runDiscoverer(){
+
+    this->veniceDevicesList->clear();
 
     this->bootstrapChannel->configure();
 
@@ -62,7 +68,9 @@ void FileTransferServiceDiscoverer::processDiscoveredDevice(const QBluetoothDevi
 
     if (discoveredDevice.coreConfigurations() & QBluetoothDeviceInfo::LowEnergyCoreConfiguration && bleBootstrapChannel->getSelectedLocalBLEAdapter()->address().toString() != discoveredDevice.address().toString() && discoveredDevice.name() == VENICE_DEVICE_NAME) {
 
-        qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device... " << discoveredDevice.name();
+        if(!this->veniceDevicesList->isDeviceInList(discoveredDevice))
+            this->veniceDevicesList->addDevice(discoveredDevice);
+        /*qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device... " << discoveredDevice.name();
 
         this->bleDeviceDiscoverer->stop();
 
@@ -104,7 +112,7 @@ void FileTransferServiceDiscoverer::processDiscoveredDevice(const QBluetoothDevi
         this->bleDeviceController->connectToDevice();
 
 
-        qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device done !";
+        qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device done !";*/
     }
     else
         qDebug() << "[FileTransferServiceDiscoverer] Ignoring BLE Device...";
@@ -237,5 +245,53 @@ void FileTransferServiceDiscoverer::readServiceCharacteristicByUuid(QBluetoothUu
 
     this->veniceFileService->readCharacteristic(characteristic);  // Will emit characteristicRead()
     qDebug() << "[FileTransferServiceDiscoverer] Read with error: "<< this->veniceFileService->error();
+
+}
+
+void FileTransferServiceDiscoverer::useSelectedDevice(const QBluetoothDeviceInfo &device){
+
+    qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device... " << device.name();
+
+    this->bleDeviceDiscoverer->stop();
+
+    this->bleDeviceController = QLowEnergyController::createCentral(device, this);
+
+    this->bleDeviceController->setRemoteAddressType(QLowEnergyController::RandomAddress);
+
+    QObject::connect(this->bleDeviceController, QOverload<QLowEnergyController::Error>::of(&QLowEnergyController::errorOccurred),
+                     [=](QLowEnergyController::Error error) {
+                         qWarning() << "[FileTransferServiceDiscoverer] ❌ Controller error:" << error;
+                     });
+
+    QObject::connect(this->bleDeviceController, &QLowEnergyController::stateChanged,
+                     [=](QLowEnergyController::ControllerState state) {
+                         qDebug() << "[FileTransferServiceDiscoverer] BLEDeviceController State changed to:" << state;
+                     });
+
+    QObject::connect(this->bleDeviceController, &QLowEnergyController::discoveryFinished, [this]() {
+
+        qDebug() << "[FileTransferServiceDiscoverer]  BLEDeviceController Service discovery finished.";
+
+        QTimer::singleShot(250, [this]() {
+            qDebug() << "Ending connection with device...";
+        });
+
+    });
+
+    qDebug() << "[FileTransferServiceDiscoverer] isValid:" << device.isValid();
+    qDebug() << "[FileTransferServiceDiscoverer] isCached:" << device.isCached();
+
+    connect(this->bleDeviceController, &QLowEnergyController::serviceDiscovered, this, &FileTransferServiceDiscoverer::processServiceDiscovered);
+    connect(this->bleDeviceController, &QLowEnergyController::connected, this, &FileTransferServiceDiscoverer::discoverServices);
+    QObject::connect(this->bleDeviceController, &QLowEnergyController::disconnected, []() {
+        qDebug() << "[FileTransferServiceDiscoverer] ❌ Disconnected from BLE device.";
+    });
+
+    qDebug() << "[FileTransferServiceDiscoverer] Controller created ! ";
+
+    this->bleDeviceController->connectToDevice();
+
+
+    qDebug() << "[FileTransferServiceDiscoverer] Connecting to BLE device done !";
 
 }

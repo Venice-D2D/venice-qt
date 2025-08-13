@@ -19,12 +19,23 @@ public:
      */
     VeniceDevicesDialog(QWidget *parent);
 
+    /**
+     *
+     * @brief ~VeniceDevicesDialog Destructor fo the class
+     */
     ~VeniceDevicesDialog();
 
-    VeniceDevicesListModel* getVeniceDevicesListModel();
+    /**
+     * @brief veniceDevicesListModel Returns the venice device list
+     * @return List of discovered venice devices
+     */
+    VeniceDevicesListModel* veniceDevicesListModel();
 
 private slots:
 
+    /**
+     * @brief useSelectedVeniceDevice Use the selected device to retrieve the file
+     */
     void useSelectedVeniceDevice();
 
 private:

@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow(){
     delete ui;
 
-    if(veniceService!=nullptr)
+    if(this->veniceService!=nullptr)
         delete veniceService;
 
     if(this->bleDiscoverer!=nullptr)
@@ -113,24 +113,29 @@ void MainWindow::on_receiveFileButton_clicked()
 
     QString directoryPath= ui->selectedReceiveFileLineEdit->text();
 
-    if(this->bleDiscoverer==nullptr)
-    {
-        BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
-        DataChannel* dataChannel = new WifiDataChannel();
-
-        this->bleDiscoverer= new FileTransferServiceDiscoverer(dataChannel, boostrapChannel, ui->useProtobufReceiveRadioButton->isChecked());
-
-    }
-
     if(this->veniceDevicesDialog==nullptr)
     {
         this->veniceDevicesDialog = new VeniceDevicesDialog(this);
     }
 
+    if(this->bleDiscoverer==nullptr)
+    {
+        BleBootstrapChannel* boostrapChannel = new BleBootstrapChannel();
+        DataChannel* dataChannel = new WifiDataChannel();
+
+        this->bleDiscoverer= new FileTransferServiceDiscoverer(dataChannel, boostrapChannel, ui->useProtobufReceiveRadioButton->isChecked(), this->veniceDevicesDialog->veniceDevicesListModel());
+
+    }
+
+
+
     if(!directoryPath.isEmpty())
     {
+        qDebug() << "[MainWindow] Running Discovery";
         this->bleDiscoverer->setDirectoryPath(directoryPath);
         bleDiscoverer->runDiscoverer();
+        qDebug() << "[MainWindow] Showing Devices Dialog";
+        this->veniceDevicesDialog->exec();
     }
 
 }
@@ -175,7 +180,7 @@ void MainWindow::on_browseReceiveFileButton_clicked()
 
 }
 
-void MainWindow::useSelectedDeviceForRetrieval(QBluetoothDeviceInfo *device)
+void MainWindow::useSelectedDeviceForRetrieval(const QBluetoothDeviceInfo &device)
 {
-
+    this->bleDiscoverer->useSelectedDevice(device);
 }

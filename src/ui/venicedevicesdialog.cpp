@@ -7,17 +7,21 @@
 VeniceDevicesDialog::VeniceDevicesDialog(QWidget *parent): QDialog(parent),
     ui(new Ui::VeniceDevicesDialog){
 
+    qDebug() << "[VeniceDevicesDialog] Init Ui "<< this->ui;
     this->ui->setupUi(this);
-    this->setModal(true);
+    qDebug() << "[VeniceDevicesDialog] Ui after Init "<< this->ui;
+    //this->setModal(true);
 
     this->ui->devicesListView->setModel(new VeniceDevicesListModel(this));
 
+    qDebug() << "[VeniceDevicesDialog] Associating slots with signals";
     connect(this->ui->cancelButtonBox, &QDialogButtonBox::accepted, this, &VeniceDevicesDialog::useSelectedVeniceDevice);
     connect(this->ui->cancelButtonBox, &QDialogButtonBox::rejected, this, &VeniceDevicesDialog::reject);
 }
 
 VeniceDevicesDialog::~VeniceDevicesDialog(){
 
+    qDebug() << "[VeniceDevicesDialog] Deleting Ui";
     delete this->ui;
 }
 
@@ -31,14 +35,14 @@ void VeniceDevicesDialog::useSelectedVeniceDevice(){
 
         MainWindow *mainWindow = dynamic_cast<MainWindow*>(this->parent());
 
-        mainWindow->useSelectedDeviceForRetrieval(this->getVeniceDevicesListModel()->deviceAt(selectedIndex.row()));
+        mainWindow->useSelectedDeviceForRetrieval(this->veniceDevicesListModel()->deviceAt(selectedIndex.row()));
 
     }
 
 
 }
 
-VeniceDevicesListModel* VeniceDevicesDialog::getVeniceDevicesListModel(){
+VeniceDevicesListModel* VeniceDevicesDialog::veniceDevicesListModel(){
     return dynamic_cast<VeniceDevicesListModel*>(this->ui->devicesListView->model());
 }
 

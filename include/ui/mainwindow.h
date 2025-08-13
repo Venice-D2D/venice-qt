@@ -52,7 +52,7 @@ public:
      * @brief useSelectedDeviceForRetrieval Start the reception of the file by using the current device
      * @param device The ble device to be used for getting the file
      */
-    void useSelectedDeviceForRetrieval(QBluetoothDeviceInfo *device);
+    void useSelectedDeviceForRetrieval(const QBluetoothDeviceInfo &device);
 
 
 private slots:

@@ -13,6 +13,7 @@
 #include <QLowEnergyService>
 #include <QLowEnergyCharacteristic>
 #include <QBluetoothUuid>
+#include "include/ui/venicedeviceslistmodel.h"
 #include <QByteArray>
 #include <QString>
 
@@ -25,8 +26,10 @@ public:
      * @param dataChannel The Channel used for data transfer
      * @param bootstrapChannel The bootstrap used for service discovering
      * @param useProtobuf true indicates that protobuf is used for serialisation. If false, json is used instead
+     * @param veniceDevicesList List of discovered venice devices
      */
-    FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf);
+    FileTransferServiceDiscoverer(DataChannel *dataChannel, BootstrapChannel *bootstrapChannel, bool useProtobuf,
+VeniceDevicesListModel* veniceDevicesList);
     ~FileTransferServiceDiscoverer();
 
     /**
@@ -39,6 +42,12 @@ public:
      * @param directoryPath The path to store the file
      */
     void setDirectoryPath(QString directoryPath);
+
+    /**
+     * @brief useSelectedDevice Use the given device to retrive the file
+     * @param device The venice device to be used
+     */
+    void useSelectedDevice(const QBluetoothDeviceInfo &device);
 
 private:
 
@@ -89,7 +98,7 @@ private:
     QString directoryPath;
 
     /**
-     * @brief fileReceiver
+     * @brief fileReceiver The file receiver
      */
     FileReceiver *fileReceiver = nullptr;
 
@@ -99,6 +108,10 @@ private:
     bool useProtobuf = true;
 
 
+    /**
+     * @brief veniceDevicesList List of discovered venice devices
+     */
+    VeniceDevicesListModel* veniceDevicesList = nullptr;
 
     /**
      *
